@@ -2,7 +2,7 @@ CREATE TABLE users (
     id_user INT AUTO_INCREMENT PRIMARY KEY,
     nom  VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
-    mot_de_passe VARCHAR(255) NOT NULL,
+    mot_de_passe VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE matches (id_match INT AUTO_INCREMENT PRIMARY KEY,titre VARCHAR(150) NOT NULL,
@@ -25,7 +25,7 @@ FOREIGN KEY (id_categorie) REFERENCES categories(id_categorie)
 
 CREATE TABLE comments (id_comment INT AUTO_INCREMENT PRIMARY KEY, id_user INT NOT NULL, id_match INT NOT NULL,
 contenu TEXT NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-FOREIGN KEY (id_user)  REFERENCES users(id_user)
+FOREIGN KEY (id_user)  REFERENCES users(id_user),
 FOREIGN KEY (id_match) REFERENCES matches(id_match)
 );
 
