@@ -18,5 +18,36 @@ class Admin{
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function activeAccount($id){
+        $sql = "UPDATE users SET status = 'activer' where id_user = :id";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ":id" => $id
+        ]);
+    }
+
+    public function desactiverAccount($id){
+        $sql = "UPDATE users SET status = 'desactiver' where id_user = :id";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ":id" => $id
+        ]);
+    }
+
+    public function accountActiver() {
+        $sql = "SELECT * from users where status = 'activer'";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+    }
 }
 ?>

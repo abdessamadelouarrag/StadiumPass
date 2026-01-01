@@ -9,7 +9,7 @@ class Acheteur{
     }
 
     public function infoAcheteur($id){
-        $sql = "SELECT * FROM users where id_user = :iduser";
+        $sql = "SELECT * FROM users where id_user = :iduser and status = 'activer'";
 
         $stmt = $this->pdo->prepare($sql);
 
