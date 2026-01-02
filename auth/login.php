@@ -21,6 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $_SESSION['iduser'] = $user['id_user'];
         $_SESSION['nom'] = $user['nom'];
+        $_SESSION['email'] = $user['email'];
 
         if ($user["role"] == 'acheteur') {
             header("Location: ../pages/matchs.php");
@@ -28,6 +29,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         if ($user["role"] == 'organisateur') {
             header("Location: ../organiser/create_match.php");
+            exit();
+        }
+        if($user['role'] == 'admin'){
+            header("Location: ../admin/dashboard.php");
             exit();
         }
     }

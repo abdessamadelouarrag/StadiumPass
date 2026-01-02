@@ -1,13 +1,14 @@
-<?php 
+<?php
 session_start();
 
 $iduser = $_SESSION['iduser'];
-$nomuser = $_SESSION['nom'];
 
 require_once "../classes/Acheteur.php";
 require_once "../config/database.php";
 
+$newAcheteur = new Acheteur();
 
+$allinfos = $newAcheteur->infoAcheteur($iduser);
 
 ?>
 
@@ -26,6 +27,10 @@ require_once "../config/database.php";
         rel="stylesheet">
 
     <style>
+        * {
+            scrollbar-width: none;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif
         }
@@ -117,20 +122,18 @@ require_once "../config/database.php";
                     <i class="fa-solid fa-bag-shopping"></i>
                 </div>
                 <div>
-                    <div class="text-2xl brand">StadiaTick</div>
-                    <div class="text-xs muted2 -mt-0.5">Buyer</div>
+                    <div class="text-2xl brand">StadiumPass</div>
+                    <div class="text-xs muted2 -mt-0.5">Acheteur</div>
                 </div>
             </a>
 
             <div class="flex items-center gap-2">
                 <a href="index.html" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i
                         class="fa-solid fa-house mr-2"></i>Home</a>
-                <a href="organizer.html" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i
-                        class="fa-solid fa-clipboard-list mr-2"></i>Organizer</a>
-                <a href="admin.html" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i
-                        class="fa-solid fa-shield-halved mr-2"></i>Admin</a>
-                <button id="logout" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i
-                        class="fa-solid fa-arrow-right-from-bracket mr-2"></i>Logout</button>
+                <a href="../auth/logout.php">
+                    <button id="logout" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i
+                            class="fa-solid fa-arrow-right-from-bracket mr-2"></i>Logout</button>
+                </a>
             </div>
         </div>
     </nav>
@@ -145,9 +148,25 @@ require_once "../config/database.php";
             </div>
 
             <div class="panel rounded-2xl p-4 min-w-[280px]">
-                <div class="text-xs muted2">Session</div>
-                <div id="uName" class="mt-1 font-bold">—</div>
-                <div id="uEmail" class="text-sm muted2">—</div>
+                <div class="text-xs flex items-center justify-between mb-3">
+                    <h3 class="border-b">Mon Profil</h3>
+                    <a href="profile.php">
+                        <button class="btn px-3 py-2 rounded-xl text-sm font-semibold">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    </a>
+                </div>
+
+                <div class="flex gap-7">
+                    <div class="w-12 h-12 rounded-[10px] overflow-hidden">
+                        <img src="<?= $allinfos['image'] ?>" alt="">
+                    </div>
+                    <div>
+                        <h3 id="uName" class="mt-1 font-bold">Nom : <?= $allinfos['nom'] ?></h3>
+                        <h3 id="uEmail" class="text-sm muted2">Email : <?= $allinfos['email'] ?></h3>
+                        <h4 class="flex items-center font-bold text-green-600 gap-2 text-sm"><?= $allinfos['status'] ?></h4>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -155,73 +174,68 @@ require_once "../config/database.php";
     <main class="max-w-7xl mx-auto px-4 pb-16">
         <div class="grid lg:grid-cols-3 gap-6">
             <section class="lg:col-span-2 card rounded-2xl overflow-hidden">
-                <div class="p-6 border-b border-white/10 flex items-center justify-between">
-                    <div class="font-bold"><i class="fa-solid fa-calendar-days mr-2 text-white/60"></i>Matchs
-                        disponibles</div>
-                    <div class="text-sm muted2">Acheter (demo)</div>
+                <div class="p-6 border-b border-white/10 flex items-center">
+                    <div class="font-bold">
+                        <i class="fa-solid fa-calendar-days mr-2 text-white/60"></i>Matchs disponibles
+                    </div>
+                    <div class="text-sm muted2">Acheter</div>
                 </div>
-                <div id="list" class="flex justify-center p-6">
-                    <article class="card rounded-2xl p-6 hover:border-white/20 transition w-full max-w-xl">
 
-                        <!-- TOP -->
-                        <div class="flex items-start justify-between gap-4">
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 rounded-xl card-red flex items-center justify-center">
-                                    <i class="fa-solid fa-futbol text-white/85"></i>
+                <div id="list" class="p-6">
+                    <div class="max-w-5xl mx-auto">
+
+                        <article class="relative rounded-2xl border border-white/10 bg-gradient-to-b from-black/80 to-black/60 shadow-xl overflow-hidden">
+                            <!-- CONTENT (responsive) -->
+                            <div class="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10 px-6 md:px-10 py-8 md:py-12">
+                                <!-- TEAM A -->
+                                <div class="w-28 h-28 md:w-40 md:h-40 rounded-3xl bg-red-800/90 flex items-center justify-center shrink-0">
+                                    <span class="text-white/40 text-sm">Logo A</span>
                                 </div>
 
-                                <div>
-                                    <h3 class="font-bold text-xl leading-tight">
-                                        Wydad AC <span class="text-white/45">vs</span> Raja CA
-                                    </h3>
+                                <!-- CENTER INFO -->
+                                <div class="text-center">
+                                    <h2 class="text-xl md:text-3xl font-extrabold">
+                                        themeA <span class="text-white/40">vs</span> themeB
+                                    </h2>
 
-                                    <div class="text-xs muted2 mt-2">
-                                        <i class="fa-solid fa-calendar-day mr-2 text-white/50"></i>
-                                        15 Décembre 2025 — 20:00
+                                    <div class="mt-3 md:mt-4 space-y-1 text-xs md:text-sm text-white/70">
+                                        <div>place: morocco rabat</div>
+                                        <div>time: 12:00</div>
                                     </div>
+                                </div>
 
-                                    <div class="text-xs muted2 mt-1">
-                                        <i class="fa-solid fa-location-dot mr-2 text-white/50"></i>
-                                        Complexe Mohammed V, Casablanca
-                                    </div>
+                                <!-- TEAM B -->
+                                <div class="w-28 h-28 md:w-40 md:h-40 rounded-3xl bg-red-800/90 flex items-center justify-center shrink-0">
+                                    <span class="text-white/40 text-sm">Logo B</span>
                                 </div>
                             </div>
 
-                            <div class="text-right">
-                                <div class="text-xs muted2">À partir de</div>
-                                <div class="text-2xl font-extrabold">
-                                    200 <span class="text-sm muted2">MAD</span>
-                                </div>
-                            </div>
-                        </div>
+                            <!-- DIVIDER -->
+                            <div class="border-t border-white/10"></div>
 
-                        <!-- BOTTOM -->
-                        <div class="mt-6 flex items-center justify-between">
-                            <span class="text-xs muted2 px-3 py-1 rounded-full border border-white/10 bg-white/5">
-                                <i class="fa-solid fa-trophy mr-2 text-white/50"></i>
-                                Ligue Pro
-                            </span>
+                            <!-- ACTIONS (responsive) -->
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 px-6 py-5">
 
-                            <div class="flex gap-3">
                                 <a href="match_details.php?id=1"
-                                    class="btn px-4 py-2 rounded-xl text-sm font-semibold">
+                                    class="w-full sm:flex-1 text-center px-5 py-3 rounded-xl border border-white/15 bg-white/5 text-sm font-bold hover:bg-white/10 transition">
                                     <i class="fa-solid fa-circle-info mr-2"></i>
                                     Voir détails
                                 </a>
 
                                 <a href="reserve.php?match=1"
-                                    class="btn-red px-4 py-2 rounded-xl text-sm font-bold">
+                                    class="w-full sm:flex-1 text-center btn-red px-5 py-3 rounded-xl text-sm font-bold">
                                     <i class="fa-solid fa-ticket mr-2"></i>
                                     Réserver
                                 </a>
                             </div>
-                        </div>
 
-                    </article>
+                        </article>
 
+                    </div>
                 </div>
 
             </section>
+
 
             <aside class="card rounded-2xl overflow-hidden">
                 <div class="p-6 border-b border-white/10">
@@ -237,6 +251,110 @@ require_once "../config/database.php";
             </aside>
         </div>
     </main>
+
+    <!-- PROFILE EDIT MODAL -->
+    <div id="profileModal" class="fixed inset-0 hidden items-center justify-center z-[200]">
+        <div id="profileBackdrop" class="absolute inset-0 backdrop"></div>
+
+        <div class="relative w-[94%] max-w-lg card rounded-2xl overflow-hidden">
+            <div class="p-6 border-b border-white/10 flex items-center justify-between">
+                <div>
+                    <div class="text-xs uppercase tracking-[0.28em] muted2">Profil</div>
+                    <div class="text-2xl brand mt-1">Modifier mes infos</div>
+                </div>
+
+                <button id="closeProfileEdit" class="btn px-3 py-2 rounded-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- FORM -->
+            <form action="update_profile.php" method="POST" class="p-6 space-y-5">
+
+                <!-- Image URL -->
+                <div class="panel rounded-2xl p-5">
+                    <div class="text-xs muted2 mb-2">Photo (URL)</div>
+
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 bg-white/5">
+                            <img id="previewImg" src="<?= $allinfos['image'] ?>" class="w-full h-full object-cover">
+                        </div>
+
+                        <input id="imageInput"
+                            name="image"
+                            value="<?= htmlspecialchars($allinfos['image']) ?>"
+                            class="input w-full rounded-xl px-4 py-3 text-white bg-transparent"
+                            placeholder="https://example.com/photo.jpg">
+                    </div>
+                </div>
+
+                <!-- Name -->
+                <div>
+                    <div class="text-xs muted2 mb-1">Nom</div>
+                    <input name="nom"
+                        value="<?= htmlspecialchars($allinfos['nom']) ?>"
+                        class="input w-full rounded-xl px-4 py-3 text-white bg-transparent">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <div class="text-xs muted2 mb-1">Email</div>
+                    <input type="email"
+                        name="email"
+                        value="<?= htmlspecialchars($allinfos['email']) ?>"
+                        class="input w-full rounded-xl px-4 py-3 text-white bg-transparent">
+                </div>
+
+                <input type="hidden" name="user_id" value="">
+
+                <div class="flex gap-3">
+                    <button type="submit" class="btn-red w-full px-5 py-3 rounded-xl text-sm font-bold">
+                        <i class="fa-solid fa-floppy-disk mr-2"></i>Enregistrer
+                    </button>
+
+                    <button type="button" id="cancelProfileEdit"
+                        class="btn w-full px-5 py-3 rounded-xl text-sm font-semibold">
+                        Annuler
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        const $ = s => document.querySelector(s);
+
+        const modal = $("#profileModal");
+        const openBtn = $("#openProfileEdit");
+        const closeBtn = $("#closeProfileEdit");
+        const cancelBtn = $("#cancelProfileEdit");
+        const backdrop = $("#profileBackdrop");
+
+        const imageInput = $("#imageInput");
+        const previewImg = $("#previewImg");
+
+        const openModal = () => {
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        };
+
+        const closeModal = () => {
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        };
+
+        openBtn.onclick = openModal;
+        closeBtn.onclick = closeModal;
+        cancelBtn.onclick = closeModal;
+        backdrop.onclick = closeModal;
+
+        // live preview from URL
+        imageInput.addEventListener("input", () => {
+            previewImg.src = imageInput.value;
+        });
+    </script>
+
 
 </body>
 
