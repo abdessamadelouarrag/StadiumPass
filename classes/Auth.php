@@ -31,7 +31,7 @@ class Auth extends User{
     }
 
     public function login($email, $password) {
-        $sql = "SELECT * FROM users where email = :email";
+        $sql = "SELECT * FROM users where email = :email and status = 'activer'";
 
         $stmt = $this->pdo->prepare($sql);
 

@@ -6,6 +6,20 @@ require_once "../classes/Admin.php";
 $all = new Admin();
 
 $accounts = $all->showAllAccounts();
+
+if (isset($_GET['Actv'])) {
+    $idacc = $_GET['Actv'];
+
+    $all->activeAccount($idacc);
+}
+
+if (isset($_GET['Destv'])) {
+    $idacc = $_GET['Destv'];
+
+    $all->desactiverAccount($idacc);
+}
+
+$allactvier = $all->accountActiver();
 ?>
 
 
@@ -125,7 +139,7 @@ $accounts = $all->showAllAccounts();
             <section class="card-red rounded-2xl p-6">
                 <div class="font-bold"><i class="fa-solid fa-chart-pie mr-2 text-white/70"></i>Stats</div>
                 <div class="mt-5 space-y-3 text-sm">
-                    <div class="flex justify-between"><span class="muted2">Users actifs</span><b id="sUsers">—</b></div>
+                    <div class="flex justify-between"><span class="muted2">Users actifs</span><b id="sUsers"><?= count($allactvier) ?></b></div>
                     <div class="flex justify-between"><span class="muted2">Demandes pending</span><b id="sPend">—</b></div>
                     <div class="flex justify-between"><span class="muted2">Billets (demo)</span><b id="sTickets">—</b></div>
                     <div class="flex justify-between"><span class="muted2">Revenus (demo)</span><b id="sRev">—</b></div>
@@ -138,26 +152,35 @@ $accounts = $all->showAllAccounts();
                     <div class="text-sm muted2">Activer / Désactiver</div>
                 </div>
 
-                <?php foreach($accounts as $acc) :?>
-                <div class="panel rounded-xl p-3 m-3 flex items-center justify-between text-sm">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg flex items-center justify-center overflow-hidden">
-                            <img src="<?= $acc['image'] ?>" alt="" class="object-cover h-full w-full">
+                <?php foreach ($accounts as $acc) : ?>
+                    <div class="panel rounded-xl p-3 m-3 flex items-center justify-between text-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg flex items-center justify-center overflow-hidden">
+                                <img src="<?= $acc['image'] ?>" alt="" class="object-cover h-full w-full">
+                            </div>
+                            <div>
+                                <div class="font-semibold leading-tight"><?= $acc['nom'] ?></div>
+                                <div class="text-xs muted2 leading-tight"><?= $acc['email'] ?> · <?= $acc['role'] ?></div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="font-semibold leading-tight"><?= $acc['nom'] ?></div>
-                            <div class="text-xs muted2 leading-tight"><?= $acc['email'] ?> · <?= $acc['role'] ?></div>
+                        <div class="flex items-center gap-3">
+                            <span class="px-2 py-1 rounded text-sm font-medium
+                            <?= $acc['status'] === 'activer' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600' ?>">
+                                <?= ucfirst($acc['status']) ?>
+                            </span>
+
+                            <a href="?Actv=<?= $acc['id_user'] ?>">
+                                <button class="bg-green-600/60 px-3 py-1 rounded-lg text-xs font-semibold">
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </a>
+                            <a href="?Destv=<?= $acc['id_user'] ?>">
+                                <button class="bg-red-700/80 px-3 py-1 rounded-lg text-xs font-semibold">
+                                    <i class="fa-solid fa-eye-low-vision"></i>
+                                </button>
+                            </a>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span class="text-xs px-2 py-0.5 rounded-md border border-emerald-400/20 bg-emerald-500/10 text-emerald-200">
-                            Actif
-                        </span>
-                        <button class="btn px-3 py-1 rounded-lg text-xs font-semibold">
-                            Désactiver
-                        </button>
-                    </div>
-                </div>
                 <?php endforeach; ?>
 
             </section>

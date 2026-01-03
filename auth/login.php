@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $checkaccount->login($email, $password);
 
     if ($user == false) {
-        echo "makayn ta user b had info !!!";
+        header("Location: login.php");
         exit();
     }
 
