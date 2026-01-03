@@ -26,17 +26,17 @@ class Acheteur{
         return $infos;
     }
 
-    public function updateinfo($nom, $email, $image, $id){
-        $sql = "UPDATE users set nom = :nom, email = :email, image = :image where id_user = :id";
+    // public function updateinfo($nom, $email, $image, $id){
+    //     $sql = "UPDATE users set nom = :nom, email = :email, image = :image where id_user = :id";
 
-        $stmt = $this->pdo->prepare($sql);
+    //     $stmt = $this->pdo->prepare($sql);
 
-        $stmt->execute([
-            ":nom" => $nom,
-            "email" => $email,
-            ":image" => $image,
-            ":id" => $id
-        ]);
-    }
+    //     $stmt->execute([
+    //         ":nom" => $nom,
+    //         "email" => $email,
+    //         ":image" => $image,
+    //         ":id" => $id
+    //     ]);
+    // }
 }
 ?>

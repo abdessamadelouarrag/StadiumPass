@@ -1,7 +1,7 @@
 <?php
 
-abstract class User{
-
+abstract class User
+{
     protected string $nom;
     protected string $email;
     protected string $password;
@@ -16,6 +16,37 @@ abstract class User{
         $this->password = $password;
         $this->image = $image;
         $this->role = $role;
-        $this->status =$status;
+        $this->status = $status;
+    }
+
+
+    public function getNom(): string
+    {
+        return $this->nom;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function getImage(): string
+    {
+        return $this->image;
+    }
+
+    public function getRole(): string
+    {
+        return $this->role;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
     }
 }

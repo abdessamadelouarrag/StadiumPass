@@ -2,9 +2,16 @@
 session_start();
 
 $iduser = $_SESSION['iduser'];
+$roleuser = $_SESSION['role'];
 
 require_once "../classes/Acheteur.php";
 require_once "../config/database.php";
+require_once "../classes/Update.php";
+
+if(!isset($iduser)){
+    header("Location: ../auth/login.php");
+    exit();
+}
 
 $acheteur = new Acheteur();
 
@@ -15,10 +22,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $newEmail = trim($_POST['email'] ?? '');
     $newImage = trim($_POST['image'] ?? '');
 
-    $acheteur->updateinfo($newName, $newEmail, $newImage, $iduser);
+    $newInfos = new Update();
+    $newInfos->updateinfo($newName, $newEmail, $newImage, $iduser);
 
     header("Location: profile.php");
     exit();
+}
+
+if($roleuser == 'acheteur'){
+    $backUrl = "../pages/matchs.php";
+}
+else if($roleuser == 'organisateur'){
+    $backUrl = "../organiser/create_match.php";
 }
 ?>
 
@@ -105,12 +120,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div>
                     <div class="text-2xl brand">StadiumPass</div>
-                    <div class="text-xs muted2">Edit Profile</div>
+                    <div class="text-xs muted2">Modifier le profil</div>
                 </div>
             </div>
 
-            <a href="#" class="btn px-4 py-2 rounded-xl text-sm font-semibold">
-                <i class="fa-solid fa-arrow-left mr-2"></i>Back
+            <a href="<?= $backUrl ?>" class="btn px-4 py-2 rounded-xl text-sm font-semibold">
+                <i class="fa-solid fa-arrow-left mr-2"></i>Page Précédente
             </a>
         </div>
     </nav>
@@ -120,22 +135,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
             <div>
                 <div class="text-xs uppercase tracking-[0.28em] text-white/60">Profile</div>
-                <h1 class="mt-2 text-5xl brand">Edit my profile</h1>
+                <h1 class="mt-2 text-5xl brand">Modifier mon profil</h1>
                 <p class="mt-4 muted max-w-2xl">
-                    Change your name, email and profile image URL.
+                    Modifiez votre nom, votre adresse e-mail et l'URL de votre image de profil.
                 </p>
             </div>
 
             <!-- Preview -->
             <div class="panel rounded-2xl p-4 min-w-[300px]">
-                <div class="text-xs muted2">Preview</div>
+                <div class="text-xs muted2">Aperçu</div>
                 <div class="mt-3 flex items-center gap-4">
                     <div class="w-14 h-14 rounded-xl overflow-hidden border border-white/10 bg-white/5">
                         <img id="previewImg" src="<?= $allinfos['image'] ?>" class="w-full h-full object-cover">
                     </div>
                     <div>
-                        <div id="previewName" class="font-bold"><?= $allinfos['nom'] ?></div>
-                        <div id="previewEmail" class="text-sm muted2"><?= $allinfos['email'] ?></div>
+                        <div id="previewName" class="font-bold">Nom : <?= $allinfos['nom'] ?></div>
+                        <div id="previewEmail" class="text-sm muted2">Email : <?= $allinfos['email'] ?></div>
                     </div>
                 </div>
             </div>
@@ -151,13 +166,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="p-6 border-b border-white/10">
                     <div class="font-bold">
                         <i class="fa-solid fa-pen-to-square mr-2 text-white/60"></i>
-                        Edit information
+                        Modifier information
                     </div>
                 </div>
 
                 <form class="p-6 space-y-5" action="" method="POST">
                     <div>
-                        <div class="text-xs muted2 mb-1">Full name</div>
+                        <div class="text-xs muted2 mb-1">Nom</div>
                         <input name="name"
                             value="<?= $allinfos['nom'] ?>"
                             class="input w-full rounded-xl px-4 py-3 text-white bg-transparent">
@@ -172,7 +187,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <div>
-                        <div class="text-xs muted2 mb-1">Profile image (URL)</div>
+                        <div class="text-xs muted2 mb-1">Image de profil (URL)</div>
                         <input name="image"
                             value="<?= $allinfos['image'] ?>"
                             class="input w-full rounded-xl px-4 py-3 text-white bg-transparent">
@@ -181,7 +196,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <button type="submit"
                         class="btn-red w-full px-5 py-3 rounded-xl text-sm font-bold">
                         <i class="fa-solid fa-floppy-disk mr-2"></i>
-                        Save
+                        Sauvegarder
                     </button>
 
                     <!-- <a href="#"
@@ -203,13 +218,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div class="p-6 space-y-4 text-sm muted2">
                     <div class="panel rounded-2xl p-4">
-                        Use a direct image URL (jpg / png).
+                        Utilisez une URL d'image directe (jpg / png).
                     </div>
                     <div class="panel rounded-2xl p-4">
-                        Email must be valid.
+                        L'adresse électronique doit être valide.
                     </div>
                     <div class="panel rounded-2xl p-4">
-                        Password change should be on another page.
+                        La modification du mot de passe devrait se faire sur une autre page.
                     </div>
                 </div>
             </aside>

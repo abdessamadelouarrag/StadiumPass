@@ -22,6 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['iduser'] = $user['id_user'];
         $_SESSION['nom'] = $user['nom'];
         $_SESSION['email'] = $user['email'];
+        $_SESSION['role'] = $user['role'];
 
         if ($user["role"] == 'acheteur') {
             header("Location: ../pages/matchs.php");
@@ -142,7 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </a>
             <div class="flex items-center gap-2">
-                <a href="index.html" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i class="fa-solid fa-house mr-2"></i>Home</a>
+                <a href="../index.php" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i class="fa-solid fa-house mr-2"></i>Home</a>
                 <a href="register.php" class="btn-red px-4 py-2 rounded-xl text-sm font-bold"><i class="fa-solid fa-user-plus mr-2"></i>Signup</a>
             </div>
         </div>
@@ -151,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <main class="max-w-7xl mx-auto px-4 py-14">
         <div class="max-w-xl mx-auto card rounded-2xl p-6">
             <h1 class="text-4xl brand">Connexion</h1>
-            <p class="mt-3 muted">Login (démo). Redirection selon le rôle.</p>
+            <p class="mt-3 muted border-b border-white/30">Login Avec Votre Account</p>
 
             <form action="" method="POST">
                 <div class="mt-6 space-y-4">
@@ -172,8 +173,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
                     <div class="card-red rounded-2xl p-4 text-sm muted2">
-                        <div class="mt-1">Email: <b class="text-white">admin@stadiatick.local</b></div>
-                        <div>Pass: <b class="text-white">admin</b></div>
+                        <div><h3>Info account Admin in your Email  ! </h3></div>
                     </div>
                 </div>
                 <button id="login" class="btn-red w-full px-5 py-3 rounded-xl text-sm font-bold mt-3">

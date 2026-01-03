@@ -2,9 +2,22 @@
 session_start();
 
 $iduser = $_SESSION['iduser'];
+$roleuser = $_SESSION['role'];
 
 require_once "../classes/Acheteur.php";
 require_once "../config/database.php";
+
+//check session
+if(!isset($iduser)){
+    header("Location: ../auth/login.php");
+    exit();
+}
+
+//check role
+if($roleuser !== 'acheteur'){
+    header("Location : ../organiser/create_match.php");
+    exit();
+}
 
 $newAcheteur = new Acheteur();
 
@@ -158,8 +171,8 @@ $allinfos = $newAcheteur->infoAcheteur($iduser);
                 </div>
 
                 <div class="flex gap-7">
-                    <div class="w-12 h-12 rounded-[10px] overflow-hidden">
-                        <img src="<?= $allinfos['image'] ?>" alt="">
+                    <div class="w-14 h-14 rounded-[10px] overflow-hidden">
+                        <img src="<?= $allinfos['image'] ?>" alt="" class="w-full h-full object-cover">
                     </div>
                     <div>
                         <h3 id="uName" class="mt-1 font-bold">Nom : <?= $allinfos['nom'] ?></h3>
@@ -184,18 +197,18 @@ $allinfos = $newAcheteur->infoAcheteur($iduser);
                 <div id="list" class="p-6">
                     <div class="max-w-5xl mx-auto">
 
-                        <article class="relative rounded-2xl border border-white/10 bg-gradient-to-b from-black/80 to-black/60 shadow-xl overflow-hidden">
+                        <article class="relative rounded-2xl border border-white/10 bg-blue-600/5 shadow-3xl overflow-hidden">
                             <!-- CONTENT (responsive) -->
                             <div class="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10 px-6 md:px-10 py-8 md:py-12">
                                 <!-- TEAM A -->
-                                <div class="w-28 h-28 md:w-40 md:h-40 rounded-3xl bg-red-800/90 flex items-center justify-center shrink-0">
-                                    <span class="text-white/40 text-sm">Logo A</span>
+                                <div class="w-28 h-28 md:w-40 md:h-40 rounded-3xl bg-red-800/90 flex items-center justify-center shrink-0 overflow-hidden">
+                                    <img src="https://i.pinimg.com/736x/5c/7f/1e/5c7f1e40d7f3e9171b5688fe4f697af6.jpg" alt="">
                                 </div>
 
                                 <!-- CENTER INFO -->
                                 <div class="text-center">
-                                    <h2 class="text-xl md:text-3xl font-extrabold">
-                                        themeA <span class="text-white/40">vs</span> themeB
+                                    <h2 class="text-xl md:text-2xl font-extrabold">
+                                        Arsenal <span class="text-white/40">vs</span> Real Madrid
                                     </h2>
 
                                     <div class="mt-3 md:mt-4 space-y-1 text-xs md:text-sm text-white/70">
@@ -205,8 +218,8 @@ $allinfos = $newAcheteur->infoAcheteur($iduser);
                                 </div>
 
                                 <!-- TEAM B -->
-                                <div class="w-28 h-28 md:w-40 md:h-40 rounded-3xl bg-red-800/90 flex items-center justify-center shrink-0">
-                                    <span class="text-white/40 text-sm">Logo B</span>
+                                <div class="w-28 h-28 md:w-40 md:h-40 rounded-3xl bg-red-800/90 flex items-center justify-center shrink-0 overflow-hidden">
+                                    <img src="https://i.pinimg.com/736x/75/d5/54/75d5544f9b0a6cb1fbd1b103dc9fac4d.jpg" alt="">
                                 </div>
                             </div>
 

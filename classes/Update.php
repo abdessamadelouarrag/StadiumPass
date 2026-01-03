@@ -1,8 +1,7 @@
 <?php 
 require_once "../config/database.php";
-require_once "../classes/User.php";
 
-class Organisateur extends User{
+class Update{
 
     private PDO $pdo;
 
@@ -10,21 +9,17 @@ class Organisateur extends User{
         $this->pdo = Database::getInstance()->getConnection();
     }
 
-    public function infoOrga($id){
-        $sql = "SELECT * FROM users where id_user = :id";
+    public function updateinfo($nom, $email, $image, $id){
+        $sql = "UPDATE users set nom = :nom, email = :email, image = :image where id_user = :id";
 
         $stmt = $this->pdo->prepare($sql);
 
         $stmt->execute([
+            ":nom" => $nom,
+            "email" => $email,
+            ":image" => $image,
             ":id" => $id
         ]);
-
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function createMatch(){
-
     }
 }
-
 ?>

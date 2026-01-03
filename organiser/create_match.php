@@ -1,10 +1,35 @@
+<?php 
+session_start();
+
+$idorg = $_SESSION['iduser'];
+$roleuser = $_SESSION['role'];
+
+require_once "../classes/Organisateur.php";
+
+//check session
+if(!isset($idorg)){
+    header("Location: ../auth/login.php");
+    exit();
+}
+
+//check role
+if($roleuser !== 'organisateur'){
+    header("Location: ../pages/matchs.php");
+    exit();
+}
+
+$all = new Organisateur();
+
+$infos = $all->infoOrga($idorg);
+?>
+
 <!doctype html>
 <html lang="fr">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>StadiaTick — Organisateur</title>
+    <title>StadiumPass — Organisateur</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
@@ -107,7 +132,7 @@
                     <i class="fa-solid fa-clipboard-list"></i>
                 </div>
                 <div>
-                    <div class="text-2xl brand">StadiaTick</div>
+                    <div class="text-2xl brand">StadiumPass</div>
                     <div class="text-xs muted2 -mt-0.5">Organisateur</div>
                 </div>
             </a>
@@ -116,15 +141,11 @@
                 <a href="index.html" class="btn px-4 py-2 rounded-xl text-sm font-semibold">
                     <i class="fa-solid fa-house mr-2"></i>Home
                 </a>
-                <a href="matchs.php" class="btn px-4 py-2 rounded-xl text-sm font-semibold">
-                    <i class="fa-solid fa-bag-shopping mr-2"></i>Acheteur
+                <a href="../auth/logout.php">
+                    <button class="btn px-4 py-2 rounded-xl text-sm font-semibold">
+                        <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>Logout
+                    </button>
                 </a>
-                <a href="admin.html" class="btn px-4 py-2 rounded-xl text-sm font-semibold">
-                    <i class="fa-solid fa-shield-halved mr-2"></i>Admin
-                </a>
-                <button class="btn px-4 py-2 rounded-xl text-sm font-semibold">
-                    <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>Logout
-                </button>
             </div>
         </div>
     </nav>
@@ -141,19 +162,22 @@
             </div>
 
             <div class="panel rounded-2xl p-4 min-w-[300px]">
-                <div class="text-xs muted2">Session</div>
-                <div class="mt-1 font-bold">— Nom Organisateur</div>
-                <div class="text-sm muted2">— email@stadiatick.local</div>
-                <div class="mt-3 flex gap-2">
-                    <a href="#profile" class="btn px-3 py-2 rounded-xl text-xs font-semibold">
-                        <i class="fa-solid fa-user-gear mr-2"></i>Profil
-                    </a>
-                    <a href="#stats" class="btn px-3 py-2 rounded-xl text-xs font-semibold">
-                        <i class="fa-solid fa-chart-line mr-2"></i>Stats
-                    </a>
-                    <a href="#reviews" class="btn px-3 py-2 rounded-xl text-xs font-semibold">
-                        <i class="fa-solid fa-star mr-2"></i>Avis
-                    </a>
+                <div class="flex justify-between items-center mb-3">
+                    <div class="text-xs muted2">Session</div>
+                    <div class="mt-3 flex gap-2">
+                        <a href="../pages/profile.php" class="btn px-3 py-2 rounded-xl text-xs font-semibold">
+                            <i class="fa-solid fa-user-gear mr-2"></i>Profil
+                        </a>
+                    </div>
+                </div>
+                <div class="flex gap-7">
+                    <div class="w-12 h-12 rounded-[10px] overflow-hidden">
+                        <img src="<?= $infos['image'] ?>" alt="" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h3 class="mt-1 font-bold">— Nom : <?= $infos['nom'] ?></h3>
+                        <h3 class="text-sm muted2">— <?= $infos['email'] ?></h3>
+                    </div>
                 </div>
             </div>
         </div>
@@ -199,8 +223,8 @@
                             <div class="font-bold mb-4"><i class="fa-solid fa-people-group mr-2 text-white/60"></i>Équipe A</div>
                             <label class="text-xs muted2 block mb-1">Nom</label>
                             <input name="teamA_name" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="Ex: Wydad AC" />
-                            <label class="text-xs muted2 block mt-4 mb-1">Logo (PNG/JPG)</label>
-                            <input name="teamA_logo" type="file" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" />
+                            <label class="text-xs muted2 block mt-4 mb-1">Logo</label>
+                            <input name="teamA_logo" type="text" placeholder="Url Image" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" />
                             <div class="mt-3 text-xs muted2 hint rounded-xl px-4 py-3">
                                 <i class="fa-solid fa-circle-info mr-2"></i>Le logo sera affiché sur la page match (plus tard via PHP).
                             </div>
@@ -210,8 +234,8 @@
                             <div class="font-bold mb-4"><i class="fa-solid fa-people-group mr-2 text-white/60"></i>Équipe B</div>
                             <label class="text-xs muted2 block mb-1">Nom</label>
                             <input name="teamB_name" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="Ex: Raja CA" />
-                            <label class="text-xs muted2 block mt-4 mb-1">Logo (PNG/JPG)</label>
-                            <input name="teamB_logo" type="file" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" />
+                            <label class="text-xs muted2 block mt-4 mb-1">Logo</label>
+                            <input name="teamB_logo" type="text" placeholder="Url Image" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" />
                             <div class="mt-3 text-xs muted2 hint rounded-xl px-4 py-3">
                                 <i class="fa-solid fa-circle-info mr-2"></i>Validation admin obligatoire avant publication.
                             </div>

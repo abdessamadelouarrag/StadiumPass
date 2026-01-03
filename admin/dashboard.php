@@ -1,7 +1,15 @@
 <?php
+session_start();
+
 require_once "../config/database.php";
 require_once "../classes/Admin.php";
 
+$idAdmine = $_SESSION['iduser'];
+
+if(!isset($idAdmine)){
+    header("Location: ../auth/login.php");
+    exit();
+}
 
 $all = new Admin();
 
@@ -119,9 +127,8 @@ $allactvier = $all->accountActiver();
             </a>
 
             <div class="flex items-center gap-2">
-                <a href="index.html" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i class="fa-solid fa-house mr-2"></i>Home</a>
-                <a href="login.html" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i class="fa-solid fa-right-to-bracket mr-2"></i>Login</a>
-                <button id="reset" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i class="fa-solid fa-rotate-left mr-2"></i>Reset</button>
+                <a href="../index.php" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i class="fa-solid fa-house mr-2"></i>Home</a>
+                <a href="../auth/logout.php" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i class="fa-solid fa-right-to-bracket mr-2"></i>Logout</a>
             </div>
         </div>
     </nav>
@@ -160,11 +167,11 @@ $allactvier = $all->accountActiver();
                             </div>
                             <div>
                                 <div class="font-semibold leading-tight"><?= $acc['nom'] ?></div>
-                                <div class="text-xs muted2 leading-tight"><?= $acc['email'] ?> · <?= $acc['role'] ?></div>
+                                <div class="text-[10px] muted2 leading-tight"><?= $acc['email'] ?> · <span class="text-green-600/60"><?= $acc['role'] ?></span></div>
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="px-2 py-1 rounded text-sm font-medium
+                            <span class="px-2 py-1 rounded text-[10px] font-medium
                             <?= $acc['status'] === 'activer' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600' ?>">
                                 <?= ucfirst($acc['status']) ?>
                             </span>
