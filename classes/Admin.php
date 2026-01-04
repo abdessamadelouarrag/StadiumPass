@@ -49,5 +49,35 @@ class Admin{
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
         
     }
+
+    public function statusMatches(){
+        $sql = "SELECT * from matches where status = 'en_attent'";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function accepterMatch($id){
+        $sql = "UPDATE matches set status = 'accepter' where id_match = :id";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ":id" => $id
+        ]);
+    }
+
+    public function refuserMatch($id){
+        $sql = "UPDATE matches set status = 'refuser' where id_match = :id";
+
+        $stmt =$this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ":id"=> $id
+        ]);
+    }
 }
 ?>

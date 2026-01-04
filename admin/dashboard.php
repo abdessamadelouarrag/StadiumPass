@@ -6,7 +6,7 @@ require_once "../classes/Admin.php";
 
 $idAdmine = $_SESSION['iduser'];
 
-if(!isset($idAdmine)){
+if (!isset($idAdmine)) {
     header("Location: ../auth/login.php");
     exit();
 }
@@ -28,6 +28,21 @@ if (isset($_GET['Destv'])) {
 }
 
 $allactvier = $all->accountActiver();
+
+//part matches 
+$allmatches = $all->statusMatches();
+
+if(isset($_GET['acp'])){
+    $idacp = $_GET['acp'];
+
+    $all->accepterMatch($idacp);
+}
+
+if(isset($_GET['ref'])){
+    $idref = $_GET['ref'];
+
+    $all->refuserMatch($idref);
+}
 ?>
 
 
@@ -197,7 +212,59 @@ $allactvier = $all->accountActiver();
                     <div class="font-bold"><i class="fa-solid fa-list-check mr-2 text-white/60"></i>Demandes</div>
                     <div class="text-sm muted2">Accepter / Refuser</div>
                 </div>
-                <div id="reqs" class="divide-y divide-white/10"></div>
+
+                <?php foreach($allmatches as $match) :?>
+                <div class="relative w-full bg-zinc-900/70 border border-white/10 p-5">
+                    <!-- Status (top-left) -->
+                    <span class="absolute top-4 left-4 px-3 py-1 rounded-lg text-[8px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                        <?= $match['status'] ?>
+                    </span>
+
+                    <!-- Main content (center) -->
+                    <div class="flex items-center justify-between gap-6 mt-3">
+                        <!-- Left logo -->
+                        <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+                            <img
+                                src="<?= $match['image_home'] ?>"
+                                class="w-full h-full object-cover"
+                                alt="Team A" />
+                        </div>
+
+                        <!-- Center text -->
+                        <div class="text-center flex-1">
+                            <h3 class="text-white text-[17px] font-bold tracking-wide">
+                                <?= $match['equipe_home'] ?> <span class="text-gray-400 font-semibold">VS</span> <?= $match['equipe_away'] ?>
+                            </h3>
+                            <p class="text-[12px] text-gray-400 mt-1"><?= $match['hour'] ?> . <?= $match['date_match'] ?></p>
+                            <p class="text-[12px] text-gray-400"><?= $match['ville'] ?> . <?= $match['stade'] ?></p>
+                        </div>
+
+                        <!-- Right logo -->
+                        <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+                            <img
+                                src="<?= $match['image_away'] ?>"
+                                class="w-full h-full object-cover"
+                                alt="Team B" />
+                        </div>
+
+                    </div>
+
+                    <!-- Bottom-left buttons -->
+                    <div class="mt-5 flex gap-3">
+                        <a href="?acp=<?= $match['id_match'] ?>">
+                            <button class="w-12 h-7 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px]">
+                                ✓
+                            </button>
+                        </a>
+                        <a href="?ref=<?= $match['id_match'] ?>">
+                            <button class="w-12 h-7 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-[10px]">
+                                ✕
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                <?php endforeach;?>
+
             </section>
         </div>
     </main>

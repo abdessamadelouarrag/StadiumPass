@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 
 $idorg = $_SESSION['iduser'];
@@ -7,13 +7,13 @@ $roleuser = $_SESSION['role'];
 require_once "../classes/Organisateur.php";
 
 //check session
-if(!isset($idorg)){
+if (!isset($idorg)) {
     header("Location: ../auth/login.php");
     exit();
 }
 
 //check role
-if($roleuser !== 'organisateur'){
+if ($roleuser !== 'organisateur') {
     header("Location: ../pages/matchs.php");
     exit();
 }
@@ -21,6 +21,25 @@ if($roleuser !== 'organisateur'){
 $all = new Organisateur();
 
 $infos = $all->infoOrga($idorg);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $titre = trim($_POST['titre'] ?? '');
+    $home = trim($_POST['equipe_home'] ?? '');
+    $away = trim($_POST['equipe_away'] ?? '');
+    $date_match = $_POST['date_match'] ?? '';
+    $hour = $_POST['hour'] ?? '';
+    $stade = trim($_POST['stade'] ?? '');
+    $ville = trim($_POST['ville'] ?? '');
+    $image_home = trim($_POST['image_home'] ?? '');
+    $image_away = trim($_POST['image_away'] ?? '');
+    $places = (int) ($_POST['places'] ?? 0);
+
+    $all->createMatch($titre, $home, $away, $date_match, $stade, $ville, $hour, $image_away, $image_home, $places, $idorg);
+}
+
+$seeMatches = $all->seeMatches($idorg);
+
 ?>
 
 <!doctype html>
@@ -217,103 +236,102 @@ $infos = $all->infoOrga($idorg);
 
                 <form class="p-6 space-y-6" action="#" method="POST" enctype="multipart/form-data">
 
+                    <!-- Match title -->
+                    <div class="panel rounded-2xl p-5">
+                        <label class="text-xs muted2 block mb-1">Titre du match</label>
+                        <input name="titre" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent"
+                            placeholder="Ex: Wydad vs Raja" />
+                    </div>
+
                     <!-- Teams -->
                     <div class="grid md:grid-cols-2 gap-4">
                         <div class="panel rounded-2xl p-5">
-                            <div class="font-bold mb-4"><i class="fa-solid fa-people-group mr-2 text-white/60"></i>Équipe A</div>
+                            <div class="font-bold mb-4">Équipe domicile</div>
                             <label class="text-xs muted2 block mb-1">Nom</label>
-                            <input name="teamA_name" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="Ex: Wydad AC" />
-                            <label class="text-xs muted2 block mt-4 mb-1">Logo</label>
-                            <input name="teamA_logo" type="text" placeholder="Url Image" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" />
-                            <div class="mt-3 text-xs muted2 hint rounded-xl px-4 py-3">
-                                <i class="fa-solid fa-circle-info mr-2"></i>Le logo sera affiché sur la page match (plus tard via PHP).
-                            </div>
+                            <input name="equipe_home" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="Ex: Wydad AC" />
+
+                            <label class="text-xs muted2 block mt-4 mb-1">Logo (URL)</label>
+                            <input name="image_home" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="https://..." />
                         </div>
 
                         <div class="panel rounded-2xl p-5">
-                            <div class="font-bold mb-4"><i class="fa-solid fa-people-group mr-2 text-white/60"></i>Équipe B</div>
+                            <div class="font-bold mb-4">Équipe extérieur</div>
                             <label class="text-xs muted2 block mb-1">Nom</label>
-                            <input name="teamB_name" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="Ex: Raja CA" />
-                            <label class="text-xs muted2 block mt-4 mb-1">Logo</label>
-                            <input name="teamB_logo" type="text" placeholder="Url Image" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" />
-                            <div class="mt-3 text-xs muted2 hint rounded-xl px-4 py-3">
-                                <i class="fa-solid fa-circle-info mr-2"></i>Validation admin obligatoire avant publication.
-                            </div>
+                            <input name="equipe_away" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="Ex: Raja CA" />
+
+                            <label class="text-xs muted2 block mt-4 mb-1">Logo (URL)</label>
+                            <input name="image_away" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="https://..." />
                         </div>
                     </div>
 
-                    <!-- Match info -->
+                    <!-- Date & hour -->
                     <div class="grid md:grid-cols-2 gap-4">
                         <div class="panel rounded-2xl p-5">
-                            <div class="font-bold mb-4"><i class="fa-solid fa-calendar-days mr-2 text-white/60"></i>Date & heure</div>
-                            <label class="text-xs muted2 block mb-1">Date</label>
-                            <input name="date" type="date" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" />
-                            <label class="text-xs muted2 block mt-4 mb-1">Heure</label>
-                            <input name="time" type="time" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" />
-                            <label class="text-xs muted2 block mt-4 mb-1">Durée (min)</label>
-                            <input name="duration" type="number" value="90" min="1" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" />
+                            <label class="text-xs muted2 block mb-1">Date du match</label>
+                            <input name="date_match" type="date"
+                                class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" />
                         </div>
 
                         <div class="panel rounded-2xl p-5">
-                            <div class="font-bold mb-4"><i class="fa-solid fa-location-dot mr-2 text-white/60"></i>Lieu</div>
-                            <label class="text-xs muted2 block mb-1">Stade</label>
-                            <input name="stadium" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="Ex: Complexe Mohammed V" />
-                            <label class="text-xs muted2 block mt-4 mb-1">Ville</label>
-                            <input name="city" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="Ex: Casablanca" />
-                            <label class="text-xs muted2 block mt-4 mb-1">Nombre de places (max 2000)</label>
-                            <input name="capacity" type="number" value="2000" min="1" max="2000" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" />
+                            <label class="text-xs muted2 block mb-1">Heure</label>
+                            <input name="hour" type="time"
+                                class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" />
                         </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="panel rounded-2xl p-5">
+                            <label class="text-xs muted2 block mb-1">Stade</label>
+                            <input name="stade" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="Ex: Complexe Mohammed V" />
+                        </div>
+
+                        <div class="panel rounded-2xl p-5">
+                            <label class="text-xs muted2 block mb-1">Ville</label>
+                            <input name="ville" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="Ex: Casablanca" />
+                        </div>
+                    </div>
+
+                    <!-- Places -->
+                    <div class="panel rounded-2xl p-5">
+                        <label class="text-xs muted2 block mb-1">Nombre de places</label>
+                        <input name="places" type="number" min="1"
+                            class="input w-full rounded-xl px-4 py-3 text-white bg-transparent"
+                            placeholder="Ex: 2000" />
                     </div>
 
                     <!-- Categories -->
                     <div class="panel rounded-2xl p-5">
-                        <div class="flex items-center justify-between gap-4">
-                            <div class="font-bold"><i class="fa-solid fa-tags mr-2 text-white/60"></i>Catégories (max 3)</div>
-                            <div class="text-xs muted2">Ex: VIP / Cat 1 / Cat 2</div>
-                        </div>
+                        <div class="font-bold mb-4">Catégories</div>
 
-                        <div class="mt-4 grid md:grid-cols-3 gap-4">
-                            <!-- Cat 1 -->
-                            <div class="card rounded-2xl p-4">
-                                <div class="text-xs muted2 mb-2">Catégorie 1</div>
-                                <input name="cat1_name" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="VIP" />
-                                <div class="mt-3 text-xs muted2 mb-2">Prix (MAD)</div>
-                                <input name="cat1_price" type="number" min="0" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="600" />
-                            </div>
-
-                            <!-- Cat 2 -->
-                            <div class="card rounded-2xl p-4">
-                                <div class="text-xs muted2 mb-2">Catégorie 2</div>
-                                <input name="cat2_name" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="Cat 1" />
-                                <div class="mt-3 text-xs muted2 mb-2">Prix (MAD)</div>
-                                <input name="cat2_price" type="number" min="0" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="350" />
-                            </div>
-
-                            <!-- Cat 3 -->
-                            <div class="card rounded-2xl p-4">
-                                <div class="text-xs muted2 mb-2">Catégorie 3</div>
-                                <input name="cat3_name" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="Cat 2" />
-                                <div class="mt-3 text-xs muted2 mb-2">Prix (MAD)</div>
-                                <input name="cat3_price" type="number" min="0" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="200" />
-                            </div>
-                        </div>
-
-                        <div class="mt-4 hint rounded-xl px-4 py-3 text-xs muted2">
-                            <i class="fa-solid fa-triangle-exclamation mr-2"></i>
-                            Astuce: côté PHP tu valides que max 3 catégories + prix > 0, puis status = <b class="text-white">pending</b>.
-                        </div>
-
-                        <div class="mt-4 flex flex-col sm:flex-row gap-3">
-                            <button type="submit" class="btn-red px-5 py-3 rounded-xl text-sm font-bold">
-                                <i class="fa-solid fa-paper-plane mr-2"></i>Envoyer la demande
-                            </button>
-                            <button type="reset" class="btn px-5 py-3 rounded-xl text-sm font-semibold">
-                                <i class="fa-solid fa-rotate-left mr-2"></i>Réinitialiser
-                            </button>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <input name="categories[]" class="input rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="VIP" />
+                            <input name="categories[]" class="input rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="Standard" />
+                            <input name="categories[]" class="input rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="Premium" />
                         </div>
                     </div>
 
+                    <!-- Actions -->
+                    <div class="flex gap-3">
+                        <button type="submit" class="btn-red px-5 py-3 rounded-xl text-sm font-bold">
+                            Créer le match
+                        </button>
+                        <button type="reset" class="btn px-5 py-3 rounded-xl text-sm font-semibold">
+                            Réinitialiser
+                        </button>
+                    </div>
+
                 </form>
+
             </section>
 
             <!-- RIGHT COLUMN -->
@@ -352,18 +370,18 @@ $infos = $all->infoOrga($idorg);
                     </div>
 
                     <div class="p-6 space-y-4">
-                        <!-- item -->
+                        <?php foreach($seeMatches as $match) :?>
                         <div class="panel rounded-2xl p-4">
                             <div class="flex items-center justify-between">
-                                <div class="font-bold">Wydad AC vs Raja CA</div>
+                                <div class="font-bold"><?= $match['equipe_home'] ?> Vs <?= $match['equipe_away'] ?></div>
                                 <span class="text-xs px-3 py-1 rounded-full border border-white/10 bg-white/5 muted2">
                                     <i class="fa-solid fa-clock mr-2"></i>En attente
                                 </span>
                             </div>
                             <div class="mt-2 text-xs muted2">
-                                <i class="fa-solid fa-calendar-day mr-2"></i>15/12/2025 — 20:00
+                                <i class="fa-solid fa-calendar-day mr-2"></i><?= $match['date_match'] ?> — <?= $match['hour'] ?>
                                 <span class="mx-2 text-white/20">•</span>
-                                <i class="fa-solid fa-location-dot mr-2"></i>Casablanca
+                                <i class="fa-solid fa-location-dot mr-2"></i><?= $match['ville'] ?>
                             </div>
                             <div class="mt-3 flex gap-2">
                                 <a href="#" class="btn px-3 py-2 rounded-xl text-xs font-semibold">
@@ -374,9 +392,9 @@ $infos = $all->infoOrga($idorg);
                                 </a>
                             </div>
                         </div>
-
+                        <?php endforeach;?>
                         <!-- item -->
-                        <div class="panel rounded-2xl p-4">
+                        <!-- <div class="panel rounded-2xl p-4">
                             <div class="flex items-center justify-between">
                                 <div class="font-bold">FUS Rabat vs AS FAR</div>
                                 <span class="text-xs px-3 py-1 rounded-full border border-white/10 bg-white/5 muted2">
@@ -396,7 +414,7 @@ $infos = $all->infoOrga($idorg);
                                     <i class="fa-solid fa-chart-line mr-2"></i>Stats
                                 </a>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </section>
 
