@@ -4,9 +4,9 @@ session_start();
 $iduser = $_SESSION['iduser'];
 $roleuser = $_SESSION['role'];
 
-require_once "../classes/Acheteur.php";
-require_once "../config/database.php";
-require_once "../classes/Update.php";
+require_once __DIR__ . "/../classes/Acheteur.php";
+require_once __DIR__ . "/../config/database.php";
+require_once __DIR__ . "/../classes/Update.php";
 
 if(!isset($iduser)){
     header("Location: ../auth/login.php");

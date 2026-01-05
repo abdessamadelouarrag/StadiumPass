@@ -5,6 +5,8 @@ require_once "../config/database.php";
 require_once "../classes/Admin.php";
 
 $idAdmine = $_SESSION['iduser'];
+$nomAdmine = $_SESSION['nom'];
+$emailAdmine = $_SESSION['email'];
 
 if (!isset($idAdmine)) {
     header("Location: ../auth/login.php");
@@ -52,7 +54,7 @@ if(isset($_GET['ref'])){
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>StadiaTick — Admin</title>
+    <title>StadiumPass — Admin</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
@@ -136,7 +138,7 @@ if(isset($_GET['ref'])){
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <div>
-                    <div class="text-2xl brand">StadiaTick</div>
+                    <div class="text-2xl brand">StadiumPass</div>
                     <div class="text-xs muted2 -mt-0.5">Admin</div>
                 </div>
             </a>
@@ -149,10 +151,17 @@ if(isset($_GET['ref'])){
     </nav>
 
     <header class="max-w-7xl mx-auto px-4 py-12">
-        <div class="max-w-3xl">
-            <div class="text-xs uppercase tracking-[0.28em] text-white/60">Admin</div>
-            <h1 class="mt-2 text-5xl brand">Supervision</h1>
-            <p class="mt-4 muted">Gérer utilisateurs (activer/désactiver) + valider/refuser demandes d’organisateurs.</p>
+        <div class="flex justify-between items-center">
+            <div class="max-w-3xl">
+                <div class="text-xs uppercase tracking-[0.28em] text-white/60">Admin</div>
+                <h1 class="mt-2 text-5xl brand">Supervision</h1>
+                <p class="mt-4 muted">Gérer utilisateurs (activer/désactiver) + valider/refuser demandes d’organisateurs.</p>
+            </div>
+            <div class="card-red rounded-2xl p-6">
+                <img src="" alt="">
+                <h2 class="font-bold">Nom : <?= $nomAdmine ?></h2>
+                <h4 class="text-white/20">Email : <?= $emailAdmine ?></h4>
+            </div>
         </div>
     </header>
 

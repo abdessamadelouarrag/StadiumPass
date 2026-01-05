@@ -4,7 +4,7 @@ session_start();
 $idorg = $_SESSION['iduser'];
 $roleuser = $_SESSION['role'];
 
-require_once "../classes/Organisateur.php";
+require_once __DIR__ . "/../classes/Organisateur.php";
 
 //check session
 if (!isset($idorg)) {
@@ -35,12 +35,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $image_away = trim($_POST['image_away'] ?? '');
     $places = (int) ($_POST['places'] ?? 0);
 
-    $all->createMatch($titre, $home, $away, $date_match, $stade, $ville, $hour, $image_away, $image_home, $places, $idorg);
+    //categorie info
+    $nomC1 = $_POST['categories1'];
+    $nomC2 = $_POST['categories2'];
+    $nomC3 = $_POST['categories3'];
+
+    $prixC1 = $_POST['prixCategorie1'];
+    $prixC2 = $_POST['prixCategorie2'];
+    $prixC3 = $_POST['prixCategorie3'];
+
+    $stockC1 = $_POST['stockCategorie1'];
+    $stockC2 = $_POST['stockCategorie2'];
+    $stockC3 = $_POST['stockCategorie3'];
+
+    // $all->createMatch($titre, $home, $away, $date_match, $stade, $ville, $hour, $image_away, $image_home, $places, $idorg);
+
+    $matchId = $all->createMatch($titre, $home, $away, $date_match, $stade, $ville, $hour, $image_away, $image_home, $places, $idorg);
+
+
+    $all->addCategorie($matchId, $nomC1, $prixC1, $stockC1);
+
+    $all->addCategorie($matchId, $nomC2, $prixC2, $stockC2);
+
+    $all->addCategorie($matchId, $nomC3, $prixC3, $stockC3);
+
+    header("Location: create_match.php");
+    exit();
 }
 
 $seeMatches = $all->seeMatches($idorg);
 
+$enattantMatches = $all->matchesW($idorg);
+
+
 ?>
+
+
+
 
 <!doctype html>
 <html lang="fr">
@@ -218,7 +249,7 @@ $seeMatches = $all->seeMatches($idorg);
             </div>
             <div class="card rounded-2xl p-5">
                 <div class="text-xs muted2">Matchs en attente</div>
-                <div class="mt-2 text-3xl font-extrabold">—</div>
+                <div class="mt-2 text-3xl font-extrabold"><?= count($enattantMatches) ?></div>
                 <div class="mt-2 text-xs muted2"><i class="fa-solid fa-shield-check mr-2"></i>Validation admin</div>
             </div>
         </section>
@@ -234,7 +265,7 @@ $seeMatches = $all->seeMatches($idorg);
                     <div class="text-sm muted2">Max 2000 places • 3 catégories</div>
                 </div>
 
-                <form class="p-6 space-y-6" action="#" method="POST" enctype="multipart/form-data">
+                <form class="p-6 space-y-6" action="" method="POST" enctype="multipart/form-data">
 
                     <!-- Match title -->
                     <div class="panel rounded-2xl p-5">
@@ -311,12 +342,28 @@ $seeMatches = $all->seeMatches($idorg);
                         <div class="font-bold mb-4">Catégories</div>
 
                         <div class="grid md:grid-cols-3 gap-4">
-                            <input name="categories[]" class="input rounded-xl px-4 py-3 text-white bg-transparent"
+                            <input name="categories1" class="input rounded-xl px-4 py-3 text-white bg-transparent"
                                 placeholder="VIP" />
-                            <input name="categories[]" class="input rounded-xl px-4 py-3 text-white bg-transparent"
+                            <input name="categories2" class="input rounded-xl px-4 py-3 text-white bg-transparent"
                                 placeholder="Standard" />
-                            <input name="categories[]" class="input rounded-xl px-4 py-3 text-white bg-transparent"
+                            <input name="categories3" class="input rounded-xl px-4 py-3 text-white bg-transparent"
                                 placeholder="Premium" />
+                        </div>
+                        <div class="grid md:grid-cols-3 gap-4 mt-3">
+                            <input name="prixCategorie1" class="input rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="100 DH" />
+                            <input name="prixCategorie2" class="input rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="180 DH" />
+                            <input name="prixCategorie3" class="input rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="250 DH" />
+                        </div>
+                        <div class="grid md:grid-cols-3 gap-4 mt-3">
+                            <input name="stockCategorie1" class="input rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="100 place" />
+                            <input name="stockCategorie2" class="input rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="700 place" />
+                            <input name="stockCategorie3" class="input rounded-xl px-4 py-3 text-white bg-transparent"
+                                placeholder="1200 place" />
                         </div>
                     </div>
 
@@ -337,31 +384,6 @@ $seeMatches = $all->seeMatches($idorg);
             <!-- RIGHT COLUMN -->
             <aside class="space-y-6">
 
-                <!-- PROFILE -->
-                <section id="profile" class="card rounded-2xl overflow-hidden">
-                    <div class="p-6 border-b border-white/10">
-                        <div class="font-bold"><i class="fa-solid fa-user-gear mr-2 text-white/60"></i>Gérer mon profil</div>
-                        <div class="text-sm muted2 mt-1">Mettre à jour les infos</div>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <div>
-                            <div class="text-xs muted2 mb-1">Nom</div>
-                            <input class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="Votre nom" />
-                        </div>
-                        <div>
-                            <div class="text-xs muted2 mb-1">Email</div>
-                            <input type="email" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="you@mail.com" />
-                        </div>
-                        <div>
-                            <div class="text-xs muted2 mb-1">Mot de passe (optionnel)</div>
-                            <input type="password" class="input w-full rounded-xl px-4 py-3 text-white bg-transparent" placeholder="••••••••" />
-                        </div>
-                        <button class="btn-red w-full px-5 py-3 rounded-xl text-sm font-bold">
-                            <i class="fa-solid fa-floppy-disk mr-2"></i>Enregistrer
-                        </button>
-                    </div>
-                </section>
-
                 <!-- MY EVENTS -->
                 <section class="card rounded-2xl overflow-hidden">
                     <div class="p-6 border-b border-white/10 flex items-center justify-between">
@@ -375,7 +397,7 @@ $seeMatches = $all->seeMatches($idorg);
                             <div class="flex items-center justify-between">
                                 <div class="font-bold"><?= $match['equipe_home'] ?> Vs <?= $match['equipe_away'] ?></div>
                                 <span class="text-xs px-3 py-1 rounded-full border border-white/10 bg-white/5 muted2">
-                                    <i class="fa-solid fa-clock mr-2"></i>En attente
+                                    <i class="fa-solid fa-clock mr-2"></i><?= $match['status'] ?>
                                 </span>
                             </div>
                             <div class="mt-2 text-xs muted2">
@@ -386,9 +408,6 @@ $seeMatches = $all->seeMatches($idorg);
                             <div class="mt-3 flex gap-2">
                                 <a href="#" class="btn px-3 py-2 rounded-xl text-xs font-semibold">
                                     <i class="fa-solid fa-eye mr-2"></i>Détails
-                                </a>
-                                <a href="#" class="btn px-3 py-2 rounded-xl text-xs font-semibold">
-                                    <i class="fa-solid fa-pen mr-2"></i>Modifier
                                 </a>
                             </div>
                         </div>

@@ -1,6 +1,6 @@
 <?php 
-require_once "../config/database.php";
-require_once "../classes/User.php";
+require_once __DIR__ . "/../config/database.php";
+require_once __DIR__ . "/../classes/User.php";
 
 class Organisateur extends User{
 
@@ -41,6 +41,9 @@ class Organisateur extends User{
             ":places" => $places,
             ":idorg" => $idorg
         ]);
+
+        return    $this->pdo->lastInsertId();
+
     }
 
     public function seeMatches($id){
@@ -53,6 +56,31 @@ class Organisateur extends User{
         ]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function matchesW($id){
+        $sql = "SELECT * from matches where id_org = :id and status = 'en_attent'";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ":id" => $id
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function addCategorie($idmatch, $nom, $prix, $stock){
+        $sql = "INSERT INTO categories (id_match, nom, prix, stock_max) VALUES (:idMatch, :nom, :prix, :stock_max)";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ":idMatch" => $idmatch,
+            ":nom" => $nom,
+            ":prix" => $prix,
+            ":stock_max" => $stock
+        ]);
     }
 }
 

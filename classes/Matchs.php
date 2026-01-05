@@ -1,6 +1,6 @@
 <?php
 
-require_once "../config/database.php";
+require_once __DIR__ ."/../config/database.php";
 
 class Matchs{
     private PDO $pdo;
@@ -15,6 +15,30 @@ class Matchs{
         $stmt = $this->pdo->prepare($sql);
 
         $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function matchesById($id){
+        $sql = " SELECT * from matches where status = 'accepter' and id_match = :idmatch";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ":idmatch" => $id
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function categorieMatch($id) {
+        $sql = "SELECT * from categories where id_match = :idmatch";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ":idmatch" => $id
+        ]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

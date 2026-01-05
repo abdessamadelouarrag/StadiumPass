@@ -4,9 +4,9 @@ session_start();
 $iduser = $_SESSION['iduser'];
 $roleuser = $_SESSION['role'];
 
-require_once "../classes/Acheteur.php";
-require_once "../config/database.php";
-require_once "../classes/Matchs.php";
+require_once __DIR__ . "/../classes/Acheteur.php";
+require_once __DIR__ . "/../config/database.php";
+require_once __DIR__ . "/../classes/Matchs.php";
 
 //check session
 if(!isset($iduser)){
@@ -36,7 +36,7 @@ $allMatches = $matches->allMatches();
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>StadiaTick — Acheteur</title>
+    <title>StadiumPass — Acheteur</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
@@ -236,7 +236,7 @@ $allMatches = $matches->allMatches();
                             <!-- ACTIONS (responsive) -->
                             <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 px-6 py-5">
 
-                                <a href="match_details.php?id=1"
+                                <a href="match_details.php?id=<?= $match['id_match'] ?>"
                                     class="w-full sm:flex-1 text-center px-5 py-3 rounded-xl border border-white/15 bg-white/5 text-sm font-bold hover:bg-white/10 transition">
                                     <i class="fa-solid fa-circle-info mr-2"></i>
                                     Voir détails

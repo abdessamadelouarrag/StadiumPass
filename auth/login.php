@@ -23,6 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['nom'] = $user['nom'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
+        $_SESSION['image'] = $user['image'];
 
         if ($user["role"] == 'acheteur') {
             header("Location: ../pages/matchs.php");
