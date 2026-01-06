@@ -242,7 +242,7 @@ $allMatches = $matches->allMatches();
                                     Voir détails
                                 </a>
 
-                                <a href="reserve.php?match=1"
+                                <a href="buy_ticket.php?id=<?= $match['id_match'] ?>"
                                     class="w-full sm:flex-1 text-center btn-red px-5 py-3 rounded-xl text-sm font-bold">
                                     <i class="fa-solid fa-ticket mr-2"></i>
                                     Réserver

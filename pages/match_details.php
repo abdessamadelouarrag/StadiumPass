@@ -23,7 +23,7 @@ $categorieMatch = $myMatch->categorieMatch($idmatch);
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>StadiaTick — Détails Match</title>
+  <title>StadiumPass — Détails Match</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
@@ -99,7 +99,7 @@ $categorieMatch = $myMatch->categorieMatch($idmatch);
         <div class="w-10 h-10 rounded-xl card-red flex items-center justify-center">
           <i class="fa-solid fa-ticket"></i>
         </div>
-        <div class="text-2xl brand tracking-wide">StadiaTick</div>
+        <div class="text-2xl brand tracking-wide">StadiumPass</div>
       </a>
 
       <div class="hidden md:flex items-center gap-2">

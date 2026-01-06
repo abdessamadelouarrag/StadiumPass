@@ -188,9 +188,6 @@ $enattantMatches = $all->matchesW($idorg);
             </a>
 
             <div class="flex items-center gap-2">
-                <a href="index.html" class="btn px-4 py-2 rounded-xl text-sm font-semibold">
-                    <i class="fa-solid fa-house mr-2"></i>Home
-                </a>
                 <a href="../auth/logout.php">
                     <button class="btn px-4 py-2 rounded-xl text-sm font-semibold">
                         <i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>Logout

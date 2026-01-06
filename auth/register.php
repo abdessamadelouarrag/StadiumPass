@@ -128,7 +128,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
             <div class="flex items-center gap-2">
                 <a href="index.html" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i class="fa-solid fa-house mr-2"></i>Home</a>
-                <a href="login.html" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i class="fa-solid fa-right-to-bracket mr-2"></i>Login</a>
+                <a href="login.php" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i class="fa-solid fa-right-to-bracket mr-2"></i>Login</a>
             </div>
         </div>
     </nav>
