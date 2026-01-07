@@ -35,35 +35,43 @@ $categorieMatch = $match->categorieMatch($idmatch);
 
 $ticket = new Ticket();
 
-$checkLimit = $ticket->checkLimitTicket($iduser, $idmatch);
-
-
 //check limit of ticket 4 max
-if($checkLimit == true){
-  echo "you are in limit bro !!";
-  header("Location: match_details.php?id$idmatch");
-  exit();
+// if($checkLimit == true){
+//   echo "you are in limit bro !!";
+//   header("Location: matchs.php");
+//   exit();
+// }
+
+$alreadyBought = $ticket->totalTicketsForMatch((int)$iduser, $idmatch);
+
+if ($alreadyBought >= 4) {
+    $_SESSION['error'] = "tu pass la limit de ticket par match (max : 4)";
+    header("Location: matchs.php");
+    exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+else{
 
-  $id_categorie = (int)($_POST['categorie'] ?? 0);
-  $quantite = (int)($_POST['quantite'] ?? 1);
-  $place_stade  = trim($_POST['place'] ?? '');
-  $nomCategorie = $_POST['nom_categorie'];
-
-  if ($id_categorie <= 0 || $quantite <= 0 || $place_stade === '') {
-    die("Veuillez remplir tous les champs.");
+  if ($_SERVER["REQUEST_METHOD"] === "POST") {
+  
+    $id_categorie = (int)($_POST['categorie'] ?? 0);
+    $quantite = (int)($_POST['quantite'] ?? 1);
+    $place_stade  = trim($_POST['place'] ?? '');
+    $nomCategorie = $_POST['nom_categorie'];
+  
+    if ($id_categorie <= 0 || $quantite <= 0 || $place_stade === '') {
+      die("Veuillez remplir tous les champs.");
+    }
+  
+    $idTicket = $ticket->createTicket($iduser, $idmatch, $id_categorie, $quantite, $place_stade);
+  
+    // $ticket->genererPdf($idmatch, $iduser, $idTicket);
+  
+    //part update total of categorie choix
+    $ticket->updateToatalCat($quantite, $idmatch, $nomCategorie);
+  
+    exit();
   }
-
-  $idTicket = $ticket->createTicket($iduser, $idmatch, $id_categorie, $quantite, $place_stade);
-
-  // $ticket->genererPdf($idmatch, $iduser, $idTicket);
-
-  //part update total of categorie choix
-  $ticket->updateToatalCat($quantite, $idmatch, $nomCategorie);
-
-  exit();
 }
 
 ?>
@@ -487,6 +495,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
   </main>
 
+  <script>
+
+    setTimeout(() => {
+      document.querySelector('.msg-error');
+    }, 2000);
+
+  </script>
 </body>
 
 </html>

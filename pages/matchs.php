@@ -1,33 +1,34 @@
 <?php
 session_start();
 
-$iduser = $_SESSION['iduser'];
-$roleuser = $_SESSION['role'];
 
 require_once __DIR__ . "/../classes/Acheteur.php";
 require_once __DIR__ . "/../config/database.php";
 require_once __DIR__ . "/../classes/Matchs.php";
 
-//check session
-if(!isset($iduser)){
+$iduser   = $_SESSION['iduser'] ?? null;
+$roleuser = $_SESSION['role'] ?? null;
+
+// check session
+if (!$iduser) {
     header("Location: ../auth/login.php");
     exit();
 }
 
-//check role
-if($roleuser !== 'acheteur'){
-    header("Location : ../organiser/create_match.php");
+// check role
+if ($roleuser !== 'acheteur') {
+    header("Location: ../organiser/create_match.php");
     exit();
 }
 
-$newAcheteur = new Acheteur();
+$errorMsg = $_SESSION['error'] ?? null;
+unset($_SESSION['error']);
 
+$newAcheteur = new Acheteur();
 $allinfos = $newAcheteur->infoAcheteur($iduser);
 
 $matches = new Matchs();
-
 $allMatches = $matches->allMatches();
-
 ?>
 
 <!doctype html>
@@ -133,6 +134,31 @@ $allMatches = $matches->allMatches();
 
 <body class="bg-app text-white min-h-screen">
 
+    <?php if (!empty($errorMsg)): ?>
+        <div id="flashError"
+            class="fixed top-24 left-1/2 -translate-x-1/2 z-[200]card-red border border-red-500/30
+            px-5 py-4 rounded-2xl shadow-2xl backdrop-blur flex items-center gap-4 animate-slideDown">
+
+            <div class="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center">
+                <i class="fa-solid fa-circle-exclamation text-red-400 text-lg"></i>
+            </div>
+
+            <div class="text-sm font-semibold text-red-100">
+                <?= htmlspecialchars($errorMsg) ?>
+            </div>
+
+        </div>
+
+
+        <script>
+            setTimeout(() => {
+                const el = document.getElementById("flashError");
+                if (el) el.remove();
+            }, 3000);
+        </script>
+    <?php endif; ?>
+
+
     <nav class="sticky top-0 z-50 border-b border-white/10 bg-black/40 backdrop-blur">
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-3">
@@ -199,56 +225,56 @@ $allMatches = $matches->allMatches();
 
                 <div id="list" class="p-6">
                     <div class="max-w-5xl mx-auto">
-                        <?php foreach($allMatches as $match) :?>
-                        <article class="relative rounded-2xl border border-white/10 bg-blue-600/5 shadow-3xl overflow-hidden mb-3">
-                            <!-- CONTENT (responsive) -->
-                            <div class="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10 px-6 md:px-10 py-8 md:py-12">
-                                <!-- TEAM A -->
-                                <div class="w-28 h-28 md:w-40 md:h-40 rounded-3xl bg-red-800/90 flex items-center justify-center shrink-0 overflow-hidden">
-                                    <img src="<?= $match['image_home'] ?>" alt="" class="w-full h-full object-cover">
-                                </div>
+                        <?php foreach ($allMatches as $match) : ?>
+                            <article class="relative rounded-2xl border border-white/10 bg-blue-600/5 shadow-3xl overflow-hidden mb-3">
+                                <!-- CONTENT (responsive) -->
+                                <div class="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10 px-6 md:px-10 py-8 md:py-12">
+                                    <!-- TEAM A -->
+                                    <div class="w-28 h-28 md:w-40 md:h-40 rounded-3xl bg-red-800/90 flex items-center justify-center shrink-0 overflow-hidden">
+                                        <img src="<?= $match['image_home'] ?>" alt="" class="w-full h-full object-cover">
+                                    </div>
 
-                                <!-- CENTER INFO -->
-                                <div class="text-center">
-                                    <h1 class="text-2xl font-bold mb-3 text-blue-700 border-b-[6px] border-blue-700/30"><?= $match['titre'] ?></h1>
-                                    <h2 class="text-xl md:text-2xl font-extrabold">
-                                        <?= $match['equipe_home'] ?> <span class="text-white/40">vs</span> <?= $match['equipe_away'] ?>
-                                    </h2>
+                                    <!-- CENTER INFO -->
+                                    <div class="text-center">
+                                        <h1 class="text-2xl font-bold mb-3 text-blue-700 border-b-[6px] border-blue-700/30"><?= $match['titre'] ?></h1>
+                                        <h2 class="text-xl md:text-2xl font-extrabold">
+                                            <?= $match['equipe_home'] ?> <span class="text-white/40">vs</span> <?= $match['equipe_away'] ?>
+                                        </h2>
 
-                                    <div class="mt-3 md:mt-4 space-y-1 text-xs md:text-sm text-white/70">
-                                        <div>Ville: <?= $match['ville'] ?></div>
-                                        <div>Date Match: <?= $match['date_match'] ?></div>
-                                        <div>Heure : <?= $match['hour'] ?></div>
+                                        <div class="mt-3 md:mt-4 space-y-1 text-xs md:text-sm text-white/70">
+                                            <div>Ville: <?= $match['ville'] ?></div>
+                                            <div>Date Match: <?= $match['date_match'] ?></div>
+                                            <div>Heure : <?= $match['hour'] ?></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- TEAM B -->
+                                    <div class="w-28 h-28 md:w-40 md:h-40 rounded-3xl bg-red-800/90 flex items-center justify-center shrink-0 overflow-hidden">
+                                        <img src="<?= $match['image_away'] ?>" alt="" class="w-full h-full object-cover">
                                     </div>
                                 </div>
 
-                                <!-- TEAM B -->
-                                <div class="w-28 h-28 md:w-40 md:h-40 rounded-3xl bg-red-800/90 flex items-center justify-center shrink-0 overflow-hidden">
-                                    <img src="<?= $match['image_away'] ?>" alt="" class="w-full h-full object-cover">
+                                <!-- DIVIDER -->
+                                <div class="border-t border-white/10"></div>
+
+                                <!-- ACTIONS (responsive) -->
+                                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 px-6 py-5">
+
+                                    <a href="match_details.php?id=<?= $match['id_match'] ?>"
+                                        class="w-full sm:flex-1 text-center px-5 py-3 rounded-xl border border-white/15 bg-white/5 text-sm font-bold hover:bg-white/10 transition">
+                                        <i class="fa-solid fa-circle-info mr-2"></i>
+                                        Voir détails
+                                    </a>
+
+                                    <a href="buy_ticket.php?id=<?= $match['id_match'] ?>"
+                                        class="w-full sm:flex-1 text-center btn-red px-5 py-3 rounded-xl text-sm font-bold">
+                                        <i class="fa-solid fa-ticket mr-2"></i>
+                                        Réserver
+                                    </a>
                                 </div>
-                            </div>
 
-                            <!-- DIVIDER -->
-                            <div class="border-t border-white/10"></div>
-
-                            <!-- ACTIONS (responsive) -->
-                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 px-6 py-5">
-
-                                <a href="match_details.php?id=<?= $match['id_match'] ?>"
-                                    class="w-full sm:flex-1 text-center px-5 py-3 rounded-xl border border-white/15 bg-white/5 text-sm font-bold hover:bg-white/10 transition">
-                                    <i class="fa-solid fa-circle-info mr-2"></i>
-                                    Voir détails
-                                </a>
-
-                                <a href="buy_ticket.php?id=<?= $match['id_match'] ?>"
-                                    class="w-full sm:flex-1 text-center btn-red px-5 py-3 rounded-xl text-sm font-bold">
-                                    <i class="fa-solid fa-ticket mr-2"></i>
-                                    Réserver
-                                </a>
-                            </div>
-
-                        </article>
-                        <?php endforeach;?>
+                            </article>
+                        <?php endforeach; ?>
                     </div>
                 </div>
 

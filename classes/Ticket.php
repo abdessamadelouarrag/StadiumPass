@@ -124,7 +124,8 @@ class Ticket
         return $file;
     }
 
-    public function updateToatalCat($stock, $idmatch, $nomCategorie){
+    public function updateToatalCat($stock, $idmatch, $nomCategorie)
+    {
         $sql = "UPDATE categories SET stock_max = stock_max - :stock WHERE id_match = :id_match and nom = :nom";
 
         $stmt = $this->pdo->prepare($sql);
@@ -136,16 +137,18 @@ class Ticket
         ]);
     }
 
-    public function checkLimitTicket($iduser, $idmatch){
-        $sql = "SELECT * from tickets where id_user = :iduser and id_match = :idmatch and quantite > 4";
+    public function totalTicketsForMatch($iduser, $idmatch): int
+    {
+        $sql = "SELECT COALESCE(SUM(quantite), 0)
+            FROM tickets
+            WHERE id_user = :iduser AND id_match = :idmatch";
 
         $stmt = $this->pdo->prepare($sql);
-
         $stmt->execute([
-            ":iduser" => $iduser,
+            ":iduser"  => $iduser,
             ":idmatch" => $idmatch
         ]);
 
-        return true;
+        return (int) $stmt->fetchColumn();
     }
 }

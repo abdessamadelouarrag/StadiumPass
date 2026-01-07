@@ -10,8 +10,8 @@ if(isset($_GET['id'])){
 
     $theMatch = $myMatch->matchesById($idmatch);
   
-    $categorieMatch = $myMatch->categorieMatch($idmatch);
   }
+  $categorieMatch = $myMatch->categorieMatch($idmatch);
 
 
 ?>
