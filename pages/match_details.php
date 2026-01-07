@@ -1,18 +1,18 @@
 <?php 
 require_once __DIR__ . "/../classes/Matchs.php";
 
+$myMatch = new Matchs();
+
 if(isset($_GET['id'])){
     $idmatch = $_GET['id'];
 
     // echo $idmatch;
 
-    $myMatch = new Matchs();
-
     $theMatch = $myMatch->matchesById($idmatch);
+  
+    $categorieMatch = $myMatch->categorieMatch($idmatch);
+  }
 
-}
-
-$categorieMatch = $myMatch->categorieMatch($idmatch);
 
 ?>
 

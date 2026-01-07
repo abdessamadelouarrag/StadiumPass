@@ -35,8 +35,7 @@ class Ticket
             c.nom AS categorie_nom, c.prix AS categorie_prix
             FROM tickets t INNER JOIN matches m     ON m.id_match = t.id_match
             INNER JOIN categories c  ON c.id_categorie = t.id_categorie
-            WHERE t.id_match = ? AND t.id_user = ? AND t.id_ticket = ? LIMIT 1
-    ";
+            WHERE t.id_match = ? AND t.id_user = ? AND t.id_ticket = ? LIMIT 1";
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$idMatch, $user_id, $idTicket]);
@@ -123,5 +122,30 @@ class Ticket
         $pdf->Output('I', $file);
 
         return $file;
+    }
+
+    public function updateToatalCat($stock, $idmatch, $nomCategorie){
+        $sql = "UPDATE categories SET stock_max = stock_max - :stock WHERE id_match = :id_match and nom = :nom";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ":stock" => $stock,
+            ":id_match" => $idmatch,
+            ":nom" => $nomCategorie
+        ]);
+    }
+
+    public function checkLimitTicket($iduser, $idmatch){
+        $sql = "SELECT * from tickets where id_user = :iduser and id_match = :idmatch and quantite > 4";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ":iduser" => $iduser,
+            ":idmatch" => $idmatch
+        ]);
+
+        return true;
     }
 }

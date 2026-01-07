@@ -12,7 +12,7 @@ if (!isset($iduser)) {
   exit();
 }
 
-if($roleuser !== 'acheteur'){
+if ($roleuser !== 'acheteur') {
   header("Location: ../auth/login.php");
   exit();
 }
@@ -35,23 +35,36 @@ $categorieMatch = $match->categorieMatch($idmatch);
 
 $ticket = new Ticket();
 
+$checkLimit = $ticket->checkLimitTicket($iduser, $idmatch);
+
+
+//check limit of ticket 4 max
+if($checkLimit == true){
+  echo "you are in limit bro !!";
+  header("Location: match_details.php?id$idmatch");
+  exit();
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
   $id_categorie = (int)($_POST['categorie'] ?? 0);
-  $quantite     = (int)($_POST['quantite'] ?? 1);
+  $quantite = (int)($_POST['quantite'] ?? 1);
   $place_stade  = trim($_POST['place'] ?? '');
+  $nomCategorie = $_POST['nom_categorie'];
 
   if ($id_categorie <= 0 || $quantite <= 0 || $place_stade === '') {
     die("Veuillez remplir tous les champs.");
   }
 
-$idTicket = $ticket->createTicket($iduser, $idmatch, $id_categorie, $quantite, $place_stade);
+  $idTicket = $ticket->createTicket($iduser, $idmatch, $id_categorie, $quantite, $place_stade);
 
-$ticket->genererPdf($idmatch, $iduser, $idTicket);
+  // $ticket->genererPdf($idmatch, $iduser, $idTicket);
 
-exit();
+  //part update total of categorie choix
+  $ticket->updateToatalCat($quantite, $idmatch, $nomCategorie);
+
+  exit();
 }
-
 
 ?>
 
@@ -379,6 +392,7 @@ exit();
                 <?php foreach ($categorieMatch as $categorie): ?>
                   <label class="card rounded-2xl p-4 cursor-pointer hover:bg-white/[0.04] transition block">
                     <div class="flex items-center justify-between">
+                      <input type="hidden" name="nom_categorie" value="<?= $categorie['nom'] ?>">
                       <div class="font-bold"><i class="fa-solid fa-crown mr-2 text-white/60"></i><?= $categorie['nom'] ?></div>
                       <input type="radio" name="categorie" value="<?= $categorie['id_categorie'] ?>" checked required />
                     </div>
@@ -396,11 +410,11 @@ exit();
                 <div class="grid md:grid-cols-4 gap-3">
                   <div>
                     <label class="text-sm muted2 mb-2">Place</label>
-                    <input class="in w-full" name="place" required/>
+                    <input class="in w-full" name="place" required />
                   </div>
                   <div>
                     <label class="text-sm muted2 mb-2">Quantite</label>
-                    <input type="number" min="1" max="4" class="in w-full" name="quantite" required/>
+                    <input type="number" min="1" max="4" class="in w-full" name="quantite" required />
                   </div>
                 </div>
 
