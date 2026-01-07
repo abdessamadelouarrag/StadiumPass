@@ -12,10 +12,15 @@ if (!isset($iduser)) {
   exit();
 }
 
-if ($roleuser == 'organisateur') {
-  header("Location: ../create_match.php");
+if($roleuser !== 'acheteur'){
+  header("Location: ../auth/login.php");
   exit();
 }
+
+// if ($roleuser !== 'organisateur') {
+//   header("Location: ../auth/login.php");
+//   exit();
+// }
 
 $match = new Matchs();
 
@@ -28,18 +33,26 @@ if (isset($_GET['id'])) {
 }
 $categorieMatch = $match->categorieMatch($idmatch);
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $id_categorie = $_POST['categorie'];
-  $quantite = $_POST['quantite'];
-  $place_stade = $_POST['place'];
+$ticket = new Ticket();
 
-  $ticket = new Ticket();
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-  //insert newticket
-  $myTicket = $ticket->createTicket($iduser, $idmatch, $id_categorie, $quantite, $place_stade);
+  $id_categorie = (int)($_POST['categorie'] ?? 0);
+  $quantite     = (int)($_POST['quantite'] ?? 1);
+  $place_stade  = trim($_POST['place'] ?? '');
 
-  exit();
+  if ($id_categorie <= 0 || $quantite <= 0 || $place_stade === '') {
+    die("Veuillez remplir tous les champs.");
+  }
+
+$idTicket = $ticket->createTicket($iduser, $idmatch, $id_categorie, $quantite, $place_stade);
+
+$ticket->genererPdf($idmatch, $iduser, $idTicket);
+
+exit();
 }
+
+
 ?>
 
 
@@ -367,7 +380,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   <label class="card rounded-2xl p-4 cursor-pointer hover:bg-white/[0.04] transition block">
                     <div class="flex items-center justify-between">
                       <div class="font-bold"><i class="fa-solid fa-crown mr-2 text-white/60"></i><?= $categorie['nom'] ?></div>
-                      <input type="radio" name="categorie" value="<?= $categorie['id_categorie'] ?>" checked />
+                      <input type="radio" name="categorie" value="<?= $categorie['id_categorie'] ?>" checked required />
                     </div>
                     <div class="mt-3 text-2xl font-extrabold"><?= $categorie['prix'] ?> <span class="text-sm font-semibold muted2">MAD</span></div>
                     <div class="mt-2 text-xs muted2">Meilleure vue • Accès premium</div>
@@ -383,11 +396,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="grid md:grid-cols-4 gap-3">
                   <div>
                     <label class="text-sm muted2 mb-2">Place</label>
-                    <input class="in w-full" name="place" />
+                    <input class="in w-full" name="place" required/>
                   </div>
                   <div>
                     <label class="text-sm muted2 mb-2">Quantite</label>
-                    <input type="number" min="1" max="4" class="in w-full" name="quantite">
+                    <input type="number" min="1" max="4" class="in w-full" name="quantite" required/>
                   </div>
                 </div>
 

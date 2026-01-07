@@ -230,7 +230,7 @@ $matches = $allMatches->allMatches();
           <a href="/pages/match_details.php?id=<?= $match['id_match'] ?>" class="btn px-4 py-3 rounded-xl text-sm font-semibold text-center">
             <i class="fa-solid fa-circle-info mr-2"></i>Détails
           </a>
-          <a href="/pages/buy_ticket.php" class="btn-red px-4 py-3 rounded-xl text-sm font-bold text-center">
+          <a href="/pages/buy_ticket.php?id" class="btn-red px-4 py-3 rounded-xl text-sm font-bold text-center">
             <i class="fa-solid fa-ticket mr-2"></i>Réserver
           </a>
         </div>

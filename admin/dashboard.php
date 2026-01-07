@@ -144,7 +144,6 @@ if(isset($_GET['ref'])){
             </a>
 
             <div class="flex items-center gap-2">
-                <a href="../index.php" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i class="fa-solid fa-house mr-2"></i>Home</a>
                 <a href="../auth/logout.php" class="btn px-4 py-2 rounded-xl text-sm font-semibold"><i class="fa-solid fa-right-to-bracket mr-2"></i>Logout</a>
             </div>
         </div>

@@ -11,7 +11,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $checkaccount = new Auth();
 
     $user = $checkaccount->login($email, $password);
-
     if ($user == false) {
         header("Location: login.php");
         exit();
