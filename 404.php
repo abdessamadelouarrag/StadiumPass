@@ -115,7 +115,7 @@
             <i class="fa-solid fa-triangle-exclamation"></i>
           </div>
           <div>
-            <div class="text-2xl brand leading-none">StadiaTick</div>
+            <div class="text-2xl brand leading-none">StadiumPass</div>
             <div class="text-xs muted2 -mt-0.5 flex items-center gap-2">
               <span class="glow-dot"></span>
               Erreur 404
@@ -135,18 +135,14 @@
 
         <!-- Actions -->
         <div class="mt-8 flex flex-col sm:flex-row gap-3 sm:justify-center">
-          <a href="index.html" class="btn-red px-5 py-3 rounded-xl text-sm font-semibold text-center">
+          <a href="index.php" class="btn-red px-5 py-3 rounded-xl text-sm font-semibold text-center">
             <i class="fa-solid fa-house mr-2"></i>Back to Home
           </a>
-          <button onclick="history.back()" class="btn px-5 py-3 rounded-xl text-sm font-semibold">
-            <i class="fa-solid fa-arrow-left mr-2"></i>Retour
-          </button>
         </div>
-
         <!-- Small footer -->
         <div class="mt-8 pt-6 border-t border-white/10 flex items-center justify-between text-xs muted2">
           <span>Code: <span class="text-white/70 font-semibold">ERR-404</span></span>
-          <span class="brand text-white/70">StadiaTick</span>
+          <span class="brand text-white/70">StadiumPass</span>
         </div>
       </div>
     </div>

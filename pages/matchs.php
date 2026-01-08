@@ -263,7 +263,6 @@ $allOldTicket = $newAcheteur->meTicket($iduser);
 
                                 <!-- ACTIONS (responsive) -->
                                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 px-6 py-5">
-
                                     <a href="match_details.php?id=<?= $match['id_match'] ?>"
                                         class="w-full sm:flex-1 text-center px-5 py-3 rounded-xl border border-white/15 bg-white/5 text-sm font-bold hover:bg-white/10 transition">
                                         <i class="fa-solid fa-circle-info mr-2"></i>
@@ -301,8 +300,8 @@ $allOldTicket = $newAcheteur->meTicket($iduser);
                                     <div class="text-sm font-semibold text-white truncate">
                                         <?= $oldMatch['equipe_home'] ?> <span class="text-white/60">vs</span> <?= $oldMatch['equipe_away'] ?>
                                     </div>
-                                    <div class="text-xs text-white/60">
-                                        <?= $oldMatch['date_achat'] ?> • <?= $oldMatch['hour'] ?>
+                                    <div class="text-[10px] text-white/60">
+                                        Date Achat : <?= $oldMatch['date_achat'] ?>
                                     </div>
                                 </div>
                             </div>

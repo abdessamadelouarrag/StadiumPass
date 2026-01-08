@@ -193,4 +193,20 @@ class Ticket
             echo "Erreur lors de l'envoi de l'email:" . $e->getMessage();
         }
     }
+
+
+    public function userHasTicket($userId, $matchId)
+    {
+        $sql = "SELECT id_ticket FROM tickets 
+            WHERE id_user = :user AND id_match = :match
+            LIMIT 1";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':user' => $userId,
+            ':match' => $matchId
+        ]);
+
+        return $stmt->fetch() ? true : false;
+    }
 }

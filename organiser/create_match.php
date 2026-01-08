@@ -5,6 +5,7 @@ $idorg = $_SESSION['iduser'];
 $roleuser = $_SESSION['role'];
 
 require_once __DIR__ . "/../classes/Organisateur.php";
+require_once __DIR__ . "/../classes/Avis.php";
 
 //check session
 if (!isset($idorg)) {
@@ -67,6 +68,14 @@ $seeMatches = $all->seeMatches($idorg);
 
 $enattantMatches = $all->matchesW($idorg);
 
+//parte all prix 
+
+$allprix = $all->allPrix($idorg);
+
+//part avis match
+$avis = new Avis();
+
+$allAvis = $avis->seeAvisById($idorg);
 
 ?>
 
@@ -234,16 +243,18 @@ $enattantMatches = $all->matchesW($idorg);
 
         <!-- KPIs -->
         <section id="stats" class="grid md:grid-cols-3 gap-4">
+            <?php foreach($allprix as $prix):?>
             <div class="card rounded-2xl p-5">
                 <div class="text-xs muted2">Billets vendus</div>
-                <div class="mt-2 text-3xl font-extrabold">—</div>
+                <div class="mt-2 text-3xl font-extrabold"><?= $prix['total_billets_vendus'] ?></div>
                 <div class="mt-2 text-xs muted2"><i class="fa-solid fa-circle-info mr-2"></i>Total tous matchs</div>
             </div>
             <div class="card rounded-2xl p-5">
                 <div class="text-xs muted2">Chiffre d’affaires</div>
-                <div class="mt-2 text-3xl font-extrabold">— <span class="text-base muted2">MAD</span></div>
+                <div class="mt-2 text-3xl font-extrabold text-green-600"><?= $prix['total_prix'] ?><span class="text-base muted2">MAD</span></div>
                 <div class="mt-2 text-xs muted2"><i class="fa-solid fa-circle-info mr-2"></i>Total validé</div>
             </div>
+            <?php endforeach;?>
             <div class="card rounded-2xl p-5">
                 <div class="text-xs muted2">Matchs en attente</div>
                 <div class="mt-2 text-3xl font-extrabold"><?= count($enattantMatches) ?></div>
@@ -440,50 +451,31 @@ $enattantMatches = $all->matchesW($idorg);
                         <div class="font-bold"><i class="fa-solid fa-star mr-2 text-white/60"></i>Commentaires & avis</div>
                         <div class="text-sm muted2 mt-1">Après fin du match</div>
                     </div>
-
+                    <?php foreach($allAvis as $avis): ?>
                     <div class="p-6 space-y-4">
                         <div class="panel rounded-2xl p-4">
                             <div class="flex items-center justify-between">
-                                <div class="font-bold">Wydad AC vs Raja CA</div>
-                                <div class="text-xs muted2">
-                                    <i class="fa-solid fa-star text-white/70"></i>
-                                    <i class="fa-solid fa-star text-white/70"></i>
-                                    <i class="fa-solid fa-star text-white/70"></i>
-                                    <i class="fa-solid fa-star text-white/30"></i>
-                                    <i class="fa-solid fa-star text-white/30"></i>
-                                </div>
+                                <div>
+                                <h1 class="font-bold"><?= $avis["equipe_home"] ?> vs <?= $avis['equipe_away'] ?></h1>
+                                <h3 class="text-sm text-blue-600"><i class="fas fa-futbol"></i> <?= $avis['match_title'] ?></h3>
                             </div>
-                            <div class="mt-2 text-xs muted2">
-                                <i class="fa-solid fa-user mr-2"></i>Utilisateur: acheteur@test.com
-                            </div>
-                            <p class="mt-2 text-sm muted">
-                                Organisation correcte, accès rapide. Les places VIP valent le coup.
-                            </p>
-                        </div>
-
-                        <div class="panel rounded-2xl p-4">
-                            <div class="flex items-center justify-between">
-                                <div class="font-bold">FUS Rabat vs AS FAR</div>
                                 <div class="text-xs muted2">
                                     <i class="fa-solid fa-star text-white/70"></i>
                                     <i class="fa-solid fa-star text-white/70"></i>
                                     <i class="fa-solid fa-star text-white/70"></i>
                                     <i class="fa-solid fa-star text-white/70"></i>
-                                    <i class="fa-solid fa-star text-white/30"></i>
+                                    <i class="fa-solid fa-star text-white/70"></i>
                                 </div>
                             </div>
                             <div class="mt-2 text-xs muted2">
-                                <i class="fa-solid fa-user mr-2"></i>Utilisateur: buyer2@test.com
+                                <i class="fa-solid fa-user mr-2"></i>Utilisateur: <?= $avis['user_name'] ?>
                             </div>
                             <p class="mt-2 text-sm muted">
-                                Très bon match, mais j’aurais aimé plus de contrôle à l’entrée.
+                                Avis : <?= $avis['contenu'] ?>
                             </p>
                         </div>
-
-                        <a href="#" class="btn w-full px-4 py-3 rounded-xl text-sm font-semibold text-center">
-                            <i class="fa-solid fa-comments mr-2"></i>Voir tout
-                        </a>
                     </div>
+                    <?php endforeach;?>
                 </section>
 
             </aside>

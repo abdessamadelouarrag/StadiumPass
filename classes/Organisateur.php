@@ -82,6 +82,21 @@ class Organisateur extends User{
             ":stock_max" => $stock
         ]);
     }
+
+    public function allPrix($idorg){
+        $sql = "SELECT m.id_org,u.nom AS organisateur,SUM(t.quantite) AS total_billets_vendus,
+                SUM(t.quantite * c.prix) AS total_prix FROM matches m JOIN users u ON u.id_user = m.id_org
+                JOIN tickets t ON t.id_match = m.id_match JOIN categories c  ON c.id_categorie = t.id_categorie
+                GROUP BY m.id_org, u.nom having id_org = :idorg";
+        
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ":idorg" => $idorg
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 ?>

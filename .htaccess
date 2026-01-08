@@ -1,2 +1,1 @@
-RewriteEngine On
-ErrorDocument 404 /404.php
+ErrorDocument 404 StadiumPass/404.php
