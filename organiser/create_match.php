@@ -452,7 +452,7 @@ $allAvis = $avis->seeAvisById($idorg);
                         <div class="text-sm muted2 mt-1">Après fin du match</div>
                     </div>
                     <?php foreach($allAvis as $avis): ?>
-                    <div class="p-6 space-y-4">
+                    <div class="p-3 space-y-4">
                         <div class="panel rounded-2xl p-4">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -471,7 +471,7 @@ $allAvis = $avis->seeAvisById($idorg);
                                 <i class="fa-solid fa-user mr-2"></i>Utilisateur: <?= $avis['user_name'] ?>
                             </div>
                             <p class="mt-2 text-sm muted">
-                                Avis : <?= $avis['contenu'] ?>
+                                <i class="fas fa-comment-dots"></i> <?= $avis['contenu'] ?>
                             </p>
                         </div>
                     </div>

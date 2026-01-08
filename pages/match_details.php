@@ -32,15 +32,18 @@ $hasTicket = $ticket->userHasTicket($_SESSION['iduser'], $idmatch);
 
 //part avis
 
+$avis = new Avis();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $avisText = trim($_POST['avis']);
 
     if (!empty($avisText)) {
-        $avis = new Avis();
         $avis->addAvis($idmatch, $iduser, $avisText);
     }
 }
 
+//part all avis bu match
+$avisMatch = $avis->allAvicMAtch($idmatch);
 
 ?>
 
@@ -348,6 +351,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
       </div>
     <?php endforeach; ?>
+
+    <!-- ===== AVIS DES SUPPORTERS ===== -->
+<div class="mt-8">
+  <div class="text-sm font-bold mb-3">
+    <i class="fa-solid fa-comments mr-2 text-white/70"></i>Avis des supporters
+  </div>
+
+  <?php if (empty($avisMatch)): ?>
+    <div class="card rounded-2xl p-4 text-sm muted2">
+      Aucun avis pour le moment.
+    </div>
+  <?php else: ?>
+    <div class="space-y-4">
+      <?php foreach ($avisMatch as $avis): ?>
+        <div class="card rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div class="font-semibold text-sm text-blue-600">
+              <i class="fa-solid fa-user mr-2 text-blue-600/60"></i>
+              <?= htmlspecialchars($avis['user_name']) ?>
+            </div>
+            <div class="text-xs muted2">
+              <?= date('d/m/Y', strtotime($avis['created_at'])) ?>
+            </div>
+          </div>
+
+          <p class="text-sm muted leading-relaxed">
+            <i class="fas fa-comments text-[10px]"></i> <?= $avis['contenu'] ?>
+          </p>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
+</div>
+
   </main>
 
 </body>
