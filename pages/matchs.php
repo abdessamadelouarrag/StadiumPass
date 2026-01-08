@@ -29,6 +29,10 @@ $allinfos = $newAcheteur->infoAcheteur($iduser);
 
 $matches = new Matchs();
 $allMatches = $matches->allMatches();
+
+//part historique ticket reserv
+
+$allOldTicket = $newAcheteur->meTicket($iduser);
 ?>
 
 <!doctype html>
@@ -280,17 +284,34 @@ $allMatches = $matches->allMatches();
 
             </section>
 
-
             <aside class="card rounded-2xl overflow-hidden">
                 <div class="p-6 border-b border-white/10">
                     <div class="font-bold"><i class="fa-solid fa-receipt mr-2 text-white/60"></i>Historique</div>
                     <div class="text-sm muted2 mt-1">Billets achetés</div>
                 </div>
-                <div id="history" class="p-6 space-y-4"></div>
-                <div class="px-6 pb-6">
-                    <button id="clear" class="btn w-full px-4 py-3 rounded-xl text-sm font-semibold">
-                        <i class="fa-solid fa-trash mr-2"></i>Vider
-                    </button>
+                <div id="history" class="p-6 space-y-4">
+                    <?php foreach($allOldTicket as $oldMatch):?>
+                        <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-white/10 bg-white/5 backdrop-blur opacity-50">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="h-10 w-10 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center overflow-hidden">
+                                    <img src="<?= $oldMatch['image_home'] ?>" alt="" class="h-full w-full object-cover grayscale">
+                                </div>
+                                
+                                <div class="min-w-0 justify-center grid">
+                                    <div class="text-sm font-semibold text-white truncate">
+                                        <?= $oldMatch['equipe_home'] ?> <span class="text-white/60">vs</span> <?= $oldMatch['equipe_away'] ?>
+                                    </div>
+                                    <div class="text-xs text-white/60">
+                                        <?= $oldMatch['date_achat'] ?> • <?= $oldMatch['hour'] ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="h-10 w-10 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center overflow-hidden">
+                                <img src="<?= $oldMatch['image_away'] ?>" alt="logoequipe2" class="h-full w-full object-cover grayscale">
+                            </div>
+                            <h3 class="flex justify-end text-[13px] text-white/30 font-bold">x<?= $oldMatch['quantite'] ?></h3>
+                    </div>
+                    <?php endforeach;?>
                 </div>
             </aside>
         </div>

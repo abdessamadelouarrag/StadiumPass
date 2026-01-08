@@ -2,7 +2,9 @@
 session_start();
 
 $iduser = $_SESSION['iduser'];
-$roleuser = $_SESSION['role'];
+$roleuser = $_SESSION['role'] ?? null;
+$emailuser = $_SESSION['email'];
+$nomuser = $_SESSION['nom'];
 
 require_once "../classes/Matchs.php";
 require_once "../classes/Ticket.php";
@@ -65,14 +67,20 @@ else{
   
     $idTicket = $ticket->createTicket($iduser, $idmatch, $id_categorie, $quantite, $place_stade);
   
-    // $ticket->genererPdf($idmatch, $iduser, $idTicket);
+    $filePdf = $ticket->genererPdf($idmatch, $iduser, $idTicket);
   
     //part update total of categorie choix
     $ticket->updateToatalCat($quantite, $idmatch, $nomCategorie);
   
+    //part send email 
+    $sendEmail = $ticket->sendEmail($emailuser, $nomuser, $filePdf);
+    
     exit();
   }
 }
+
+
+
 
 ?>
 
@@ -328,6 +336,7 @@ else{
         <div class="text-2xl brand tracking-wide">StadiumPass</div>
       </a>
 
+      <?php if($roleuser == null):?>
       <div class="hidden md:flex items-center gap-2">
         <a href="/auth/login.php" class="btn px-4 py-2 rounded-xl text-sm font-semibold">
           <i class="fa-solid fa-right-to-bracket mr-2"></i>Login
@@ -336,6 +345,13 @@ else{
           <i class="fa-solid fa-user-plus mr-2"></i>Signup
         </a>
       </div>
+      <?php else:?>
+      <div class="hidden md:flex items-center gap-2">
+        <a href="../index.php" class="btn px-4 py-2 rounded-xl text-sm font-semibold">
+          <i class="fa-solid fa-right-to-bracket mr-2"></i>Home
+        </a>
+      </div>
+      <?php endif;?>
     </div>
   </nav>
 
@@ -354,10 +370,11 @@ else{
           </h1>
           <p class="mt-3 muted text-lg">Choisis catégorie + place, puis ton ticket s’affiche en bas.</p>
         </div>
-
-        <a href="match_details.php?id=<?= $id ?>" class="btn px-5 py-3 rounded-xl text-sm font-semibold">
-          <i class="fa-solid fa-arrow-left mr-2"></i>Retour
-        </a>
+        <button onclick="history.back()">
+          <a href="" class="btn px-5 py-3 rounded-xl text-sm font-semibold">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Retour
+          </a>
+        </button>
       </div>
 
       <!-- Top: choices -->

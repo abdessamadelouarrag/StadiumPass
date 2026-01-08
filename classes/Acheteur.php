@@ -38,5 +38,17 @@ class Acheteur{
     //         ":id" => $id
     //     ]);
     // }
+
+    public function meTicket($iduser){
+        $sql = "SELECT * from matches join tickets on matches.id_match = tickets.id_match where id_user = :iduser";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ":iduser" => $iduser
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>

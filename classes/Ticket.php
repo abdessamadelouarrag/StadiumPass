@@ -119,7 +119,7 @@ class Ticket
         }
 
         $file = "ticket_{$idTicket}_match_{$idMatch}_user_{$user_id}.pdf";
-        $pdf->Output('I', $file);
+        $pdf->Output('F', $file);
 
         return $file;
     }
@@ -139,7 +139,7 @@ class Ticket
 
     public function totalTicketsForMatch($iduser, $idmatch): int
     {
-        $sql = "SELECT COALESCE(SUM(quantite), 0)
+        $sql = "SELECT COALESCE(SUM(quantite), 0) 
             FROM tickets
             WHERE id_user = :iduser AND id_match = :idmatch";
 
@@ -150,5 +150,47 @@ class Ticket
         ]);
 
         return (int) $stmt->fetchColumn();
+    }
+
+    public function sendEmail($toEmail, $toName, $pdfFile)
+    {
+        require '../PHPMailer-master/src/PHPMailer.php';
+        require '../PHPMailer-master/src/SMTP.php';
+        require '../PHPMailer-master/src/Exception.php';
+
+
+        try {
+            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'abdessamad4804@gmail.com';
+            $mail->Password   = 'ueir kdij ngbz nktj';
+            $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
+
+            $mail->setFrom('abdessamad4804@gmail.com', 'StadiumPass');
+            $mail->addAddress($toEmail, $toName);
+
+            // attachment
+            $mail->addAttachment($pdfFile);
+
+            // contenue
+            $mail->isHTML(true);
+            $mail->Subject = 'Votre ticket pour le match';
+            $mail->Body    = "<p>Bonjour $toName,</p>
+                        <p>Merci pour votre reservation. Veuillez trouver votre ticket en piece jointe.</p>";
+            $mail->AltBody = "Bonjour $toName, Merci pour votre reservation. Veuillez trouver votre ticket en piece jointe.";
+
+            $mail->send();
+            header("Location: ../pages/ticket_view.php");
+
+            // supprimer le file temporaire 
+            if (file_exists($pdfFile)) {
+                unlink($pdfFile);
+            }
+        } catch (Exception $e) {
+            echo "Erreur lors de l'envoi de l'email:" . $e->getMessage();
+        }
     }
 }

@@ -1,5 +1,8 @@
 <?php 
+session_start();
 require_once __DIR__ . "/../classes/Matchs.php";
+
+$role = $_SESSION['role'] ?? null;
 
 $myMatch = new Matchs();
 
@@ -102,6 +105,7 @@ if(isset($_GET['id'])){
         <div class="text-2xl brand tracking-wide">StadiumPass</div>
       </a>
 
+      <?php if($role == null):?>
       <div class="hidden md:flex items-center gap-2">
         <a href="/auth/login.php" class="btn px-4 py-2 rounded-xl text-sm font-semibold">
           <i class="fa-solid fa-right-to-bracket mr-2"></i>Login
@@ -110,6 +114,13 @@ if(isset($_GET['id'])){
           <i class="fa-solid fa-user-plus mr-2"></i>Signup
         </a>
       </div>
+      <?php else: ?>
+        <div class="hidden md:flex items-center gap-2">
+        <a href="../index.php" class="btn px-4 py-2 rounded-xl text-sm font-semibold">
+          <i class="fa-solid fa-right-to-bracket mr-2"></i>Home
+        </a>
+      </div>
+      <?php endif;?>
     </div>
   </nav>
 
