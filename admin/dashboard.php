@@ -3,6 +3,7 @@ session_start();
 
 require_once "../config/database.php";
 require_once "../classes/Admin.php";
+require_once __DIR__ . "/../classes/Avis.php";
 
 $idAdmine = $_SESSION['iduser'];
 $nomAdmine = $_SESSION['nom'];
@@ -34,17 +35,23 @@ $allactvier = $all->accountActiver();
 //part matches 
 $allmatches = $all->statusMatches();
 
-if(isset($_GET['acp'])){
+if (isset($_GET['acp'])) {
     $idacp = $_GET['acp'];
 
     $all->accepterMatch($idacp);
 }
 
-if(isset($_GET['ref'])){
+if (isset($_GET['ref'])) {
     $idref = $_GET['ref'];
 
     $all->refuserMatch($idref);
 }
+
+//part see all avis
+$avis = new Avis();
+
+$allAvis = $avis->seeAllAvis();
+
 ?>
 
 
@@ -61,8 +68,16 @@ if(isset($_GET['ref'])){
     <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
+        * {
+            scrollbar-width: none;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif
+        }
+
+        .scrollbar-none {
+            scrollbar-width: none;
         }
 
         .brand {
@@ -182,36 +197,38 @@ if(isset($_GET['ref'])){
                     <div class="text-sm muted2">Activer / Désactiver</div>
                 </div>
 
-                <?php foreach ($accounts as $acc) : ?>
-                    <div class="panel rounded-xl p-3 m-3 flex items-center justify-between text-sm">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-lg flex items-center justify-center overflow-hidden">
-                                <img src="<?= $acc['image'] ?>" alt="" class="object-cover h-full w-full">
+                <div class="h-72 scroll-smooth overflow-auto scrollbar-none">
+                    <?php foreach ($accounts as $acc) : ?>
+                        <div class="panel rounded-xl p-3 m-3 flex items-center justify-between text-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center overflow-hidden">
+                                    <img src="<?= $acc['image'] ?>" alt="" class="object-cover h-full w-full">
+                                </div>
+                                <div>
+                                    <div class="font-semibold leading-tight"><?= $acc['nom'] ?></div>
+                                    <div class="text-[10px] muted2 leading-tight"><?= $acc['email'] ?> · <span class="text-green-600/60"><?= $acc['role'] ?></span></div>
+                                </div>
                             </div>
-                            <div>
-                                <div class="font-semibold leading-tight"><?= $acc['nom'] ?></div>
-                                <div class="text-[10px] muted2 leading-tight"><?= $acc['email'] ?> · <span class="text-green-600/60"><?= $acc['role'] ?></span></div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="px-2 py-1 rounded text-[10px] font-medium
-                            <?= $acc['status'] === 'activer' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600' ?>">
-                                <?= ucfirst($acc['status']) ?>
-                            </span>
+                            <div class="flex items-center gap-3">
+                                <span class="px-2 py-1 rounded text-[10px] font-medium
+                                <?= $acc['status'] === 'activer' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600' ?>">
+                                    <?= ucfirst($acc['status']) ?>
+                                </span>
 
-                            <a href="?Actv=<?= $acc['id_user'] ?>">
-                                <button class="bg-green-600/60 px-3 py-1 rounded-lg text-xs font-semibold">
-                                    <i class="fa-regular fa-eye"></i>
-                                </button>
-                            </a>
-                            <a href="?Destv=<?= $acc['id_user'] ?>">
-                                <button class="bg-red-700/80 px-3 py-1 rounded-lg text-xs font-semibold">
-                                    <i class="fa-solid fa-eye-low-vision"></i>
-                                </button>
-                            </a>
+                                <a href="?Actv=<?= $acc['id_user'] ?>">
+                                    <button class="bg-green-600/60 px-3 py-1 rounded-lg text-xs font-semibold">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </a>
+                                <a href="?Destv=<?= $acc['id_user'] ?>">
+                                    <button class="bg-red-700/80 px-3 py-1 rounded-lg text-xs font-semibold">
+                                        <i class="fa-solid fa-eye-low-vision"></i>
+                                    </button>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </div>
 
             </section>
 
@@ -221,60 +238,108 @@ if(isset($_GET['ref'])){
                     <div class="text-sm muted2">Accepter / Refuser</div>
                 </div>
 
-                <?php foreach($allmatches as $match) :?>
-                <div class="relative w-full bg-zinc-900/70 border border-white/10 p-5">
-                    <!-- Status (top-left) -->
-                    <span class="absolute top-4 left-4 px-3 py-1 rounded-lg text-[8px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
-                        <?= $match['status'] ?>
-                    </span>
+                <?php foreach ($allmatches as $match) : ?>
+                    <div class="relative w-full bg-zinc-900/70 border border-white/10 p-5">
+                        <!-- Status (top-left) -->
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-lg text-[8px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                            <?= $match['status'] ?>
+                        </span>
 
-                    <!-- Main content (center) -->
-                    <div class="flex items-center justify-between gap-6 mt-3">
-                        <!-- Left logo -->
-                        <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
-                            <img
-                                src="<?= $match['image_home'] ?>"
-                                class="w-full h-full object-cover"
-                                alt="Team A" />
+                        <!-- Main content (center) -->
+                        <div class="flex items-center justify-between gap-6 mt-3">
+                            <!-- Left logo -->
+                            <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+                                <img
+                                    src="<?= $match['image_home'] ?>"
+                                    class="w-full h-full object-cover"
+                                    alt="Team A" />
+                            </div>
+
+                            <!-- Center text -->
+                            <div class="text-center flex-1">
+                                <h3 class="text-white text-[17px] font-bold tracking-wide">
+                                    <?= $match['equipe_home'] ?> <span class="text-gray-400 font-semibold">VS</span> <?= $match['equipe_away'] ?>
+                                </h3>
+                                <p class="text-[12px] text-gray-400 mt-1"><?= $match['hour'] ?> . <?= $match['date_match'] ?></p>
+                                <p class="text-[12px] text-gray-400"><?= $match['ville'] ?> . <?= $match['stade'] ?></p>
+                            </div>
+
+                            <!-- Right logo -->
+                            <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+                                <img
+                                    src="<?= $match['image_away'] ?>"
+                                    class="w-full h-full object-cover"
+                                    alt="Team B" />
+                            </div>
+
                         </div>
 
-                        <!-- Center text -->
-                        <div class="text-center flex-1">
-                            <h3 class="text-white text-[17px] font-bold tracking-wide">
-                                <?= $match['equipe_home'] ?> <span class="text-gray-400 font-semibold">VS</span> <?= $match['equipe_away'] ?>
-                            </h3>
-                            <p class="text-[12px] text-gray-400 mt-1"><?= $match['hour'] ?> . <?= $match['date_match'] ?></p>
-                            <p class="text-[12px] text-gray-400"><?= $match['ville'] ?> . <?= $match['stade'] ?></p>
+                        <!-- Bottom-left buttons -->
+                        <div class="mt-5 flex gap-3">
+                            <a href="?acp=<?= $match['id_match'] ?>">
+                                <button class="w-12 h-7 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px]">
+                                    ✓
+                                </button>
+                            </a>
+                            <a href="?ref=<?= $match['id_match'] ?>">
+                                <button class="w-12 h-7 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-[10px]">
+                                    ✕
+                                </button>
+                            </a>
                         </div>
-
-                        <!-- Right logo -->
-                        <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
-                            <img
-                                src="<?= $match['image_away'] ?>"
-                                class="w-full h-full object-cover"
-                                alt="Team B" />
-                        </div>
-
                     </div>
-
-                    <!-- Bottom-left buttons -->
-                    <div class="mt-5 flex gap-3">
-                        <a href="?acp=<?= $match['id_match'] ?>">
-                            <button class="w-12 h-7 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px]">
-                                ✓
-                            </button>
-                        </a>
-                        <a href="?ref=<?= $match['id_match'] ?>">
-                            <button class="w-12 h-7 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-[10px]">
-                                ✕
-                            </button>
-                        </a>
-                    </div>
-                </div>
-                <?php endforeach;?>
+                <?php endforeach; ?>
 
             </section>
         </div>
+        <section id="reviews" class="card rounded-2xl overflow-hidden mt-9">
+            <div class="p-5 border-b border-white/10">
+                <div class="font-bold">
+                    <i class="fa-solid fa-star mr-2 text-white/60"></i>Commentaires & avis
+                </div>
+                <div class="text-xs muted2 mt-1">Après fin du match</div>
+            </div>
+
+            <?php if (empty($allAvis)): ?>
+                <div class="p-5 text-sm muted2">
+                    Aucun avis pour le moment.
+                </div>
+            <?php else: ?>
+                <div class="p-4 space-y-3">
+                    <?php foreach ($allAvis as $avis): ?>
+                        <div class="panel rounded-2xl p-4">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="min-w-0">
+                                    <div class="font-semibold truncate">
+                                        <?= htmlspecialchars($avis["equipe_home"] ?? '') ?> vs <?= htmlspecialchars($avis["equipe_away"] ?? '') ?>
+                                    </div>
+
+                                    <div class="mt-1 text-xs muted2 flex flex-wrap gap-x-3 gap-y-1">
+                                        <span><i class="fa-solid fa-user mr-1"></i><?= htmlspecialchars($avis['user_name'] ?? 'User') ?></span>
+                                        <?php if (!empty($avis['created_at'])): ?>
+                                            <span><i class="fa-regular fa-clock mr-1"></i><?= htmlspecialchars($avis['created_at']) ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
+                                <div class="text-[10px] text-white/60 whitespace-nowrap">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                            </div>
+
+                            <p class="mt-2 text-sm muted leading-relaxed">
+                                <?= nl2br(htmlspecialchars($avis['contenu'] ?? '')) ?>
+                            </p>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </section>
+
     </main>
 </body>
 

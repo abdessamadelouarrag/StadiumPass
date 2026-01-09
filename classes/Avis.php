@@ -24,6 +24,18 @@ class Avis
         ]);
     }
 
+    public function seeAllAvis(){
+        $sql = "SELECT c.id_comment, c.contenu, c.created_at, u.nom AS user_name, m.titre AS match_title, m.equipe_home, m.equipe_away
+                FROM comments c JOIN users u ON c.id_user = u.id_user JOIN matches m ON c.id_match = m.id_match";
+        
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    }
+
     public function seeAvisById($idorg)
     {
         $sql = "SELECT c.id_comment, c.contenu, c.created_at, u.nom AS user_name, m.titre AS match_title, m.equipe_home, m.equipe_away
