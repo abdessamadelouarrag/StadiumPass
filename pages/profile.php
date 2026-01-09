@@ -8,7 +8,7 @@ require_once __DIR__ . "/../classes/Acheteur.php";
 require_once __DIR__ . "/../config/database.php";
 require_once __DIR__ . "/../classes/Update.php";
 
-if(!isset($iduser)){
+if (!isset($iduser)) {
     header("Location: ../auth/login.php");
     exit();
 }
@@ -29,10 +29,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit();
 }
 
-if($roleuser == 'acheteur'){
+if ($roleuser == 'acheteur') {
     $backUrl = "../pages/matchs.php";
-}
-else if($roleuser == 'organisateur'){
+} else if ($roleuser == 'organisateur') {
     $backUrl = "../organiser/create_match.php";
 }
 ?>
@@ -49,6 +48,10 @@ else if($roleuser == 'organisateur'){
     <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
+        * {
+            scrollbar-width: none;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif
         }

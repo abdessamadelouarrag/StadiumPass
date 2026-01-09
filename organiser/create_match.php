@@ -95,6 +95,10 @@ $allAvis = $avis->seeAvisById($idorg);
     <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
+        * {
+            scrollbar-width: none;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif
         }
@@ -243,18 +247,18 @@ $allAvis = $avis->seeAvisById($idorg);
 
         <!-- KPIs -->
         <section id="stats" class="grid md:grid-cols-3 gap-4">
-            <?php foreach($allprix as $prix):?>
-            <div class="card rounded-2xl p-5">
-                <div class="text-xs muted2">Billets vendus</div>
-                <div class="mt-2 text-3xl font-extrabold"><?= $prix['total_billets_vendus'] ?></div>
-                <div class="mt-2 text-xs muted2"><i class="fa-solid fa-circle-info mr-2"></i>Total tous matchs</div>
-            </div>
-            <div class="card rounded-2xl p-5">
-                <div class="text-xs muted2">Chiffre d’affaires</div>
-                <div class="mt-2 text-3xl font-extrabold text-green-600"><?= $prix['total_prix'] ?><span class="text-base muted2">MAD</span></div>
-                <div class="mt-2 text-xs muted2"><i class="fa-solid fa-circle-info mr-2"></i>Total validé</div>
-            </div>
-            <?php endforeach;?>
+            <?php foreach ($allprix as $prix): ?>
+                <div class="card rounded-2xl p-5">
+                    <div class="text-xs muted2">Billets vendus</div>
+                    <div class="mt-2 text-3xl font-extrabold"><?= $prix['total_billets_vendus'] ?></div>
+                    <div class="mt-2 text-xs muted2"><i class="fa-solid fa-circle-info mr-2"></i>Total tous matchs</div>
+                </div>
+                <div class="card rounded-2xl p-5">
+                    <div class="text-xs muted2">Chiffre d’affaires</div>
+                    <div class="mt-2 text-3xl font-extrabold text-green-600"><?= $prix['total_prix'] ?><span class="text-base muted2">MAD</span></div>
+                    <div class="mt-2 text-xs muted2"><i class="fa-solid fa-circle-info mr-2"></i>Total validé</div>
+                </div>
+            <?php endforeach; ?>
             <div class="card rounded-2xl p-5">
                 <div class="text-xs muted2">Matchs en attente</div>
                 <div class="mt-2 text-3xl font-extrabold"><?= count($enattantMatches) ?></div>
@@ -400,26 +404,26 @@ $allAvis = $avis->seeAvisById($idorg);
                     </div>
 
                     <div class="p-6 space-y-4">
-                        <?php foreach($seeMatches as $match) :?>
-                        <div class="panel rounded-2xl p-4">
-                            <div class="flex items-center justify-between">
-                                <div class="font-bold"><?= $match['equipe_home'] ?> Vs <?= $match['equipe_away'] ?></div>
-                                <span class="text-xs px-3 py-1 rounded-full border border-white/10 bg-white/5 muted2">
-                                    <i class="fa-solid fa-clock mr-2"></i><?= $match['status'] ?>
-                                </span>
+                        <?php foreach ($seeMatches as $match) : ?>
+                            <div class="panel rounded-2xl p-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="font-bold"><?= $match['equipe_home'] ?> Vs <?= $match['equipe_away'] ?></div>
+                                    <span class="text-xs px-3 py-1 rounded-full border border-white/10 bg-white/5 muted2">
+                                        <i class="fa-solid fa-clock mr-2"></i><?= $match['status'] ?>
+                                    </span>
+                                </div>
+                                <div class="mt-2 text-xs muted2">
+                                    <i class="fa-solid fa-calendar-day mr-2"></i><?= $match['date_match'] ?> — <?= $match['hour'] ?>
+                                    <span class="mx-2 text-white/20">•</span>
+                                    <i class="fa-solid fa-location-dot mr-2"></i><?= $match['ville'] ?>
+                                </div>
+                                <div class="mt-3 flex gap-2">
+                                    <a href="#" class="btn px-3 py-2 rounded-xl text-xs font-semibold">
+                                        <i class="fa-solid fa-eye mr-2"></i>Détails
+                                    </a>
+                                </div>
                             </div>
-                            <div class="mt-2 text-xs muted2">
-                                <i class="fa-solid fa-calendar-day mr-2"></i><?= $match['date_match'] ?> — <?= $match['hour'] ?>
-                                <span class="mx-2 text-white/20">•</span>
-                                <i class="fa-solid fa-location-dot mr-2"></i><?= $match['ville'] ?>
-                            </div>
-                            <div class="mt-3 flex gap-2">
-                                <a href="#" class="btn px-3 py-2 rounded-xl text-xs font-semibold">
-                                    <i class="fa-solid fa-eye mr-2"></i>Détails
-                                </a>
-                            </div>
-                        </div>
-                        <?php endforeach;?>
+                        <?php endforeach; ?>
                         <!-- item -->
                         <!-- <div class="panel rounded-2xl p-4">
                             <div class="flex items-center justify-between">
@@ -451,31 +455,31 @@ $allAvis = $avis->seeAvisById($idorg);
                         <div class="font-bold"><i class="fa-solid fa-star mr-2 text-white/60"></i>Commentaires & avis</div>
                         <div class="text-sm muted2 mt-1">Après fin du match</div>
                     </div>
-                    <?php foreach($allAvis as $avis): ?>
-                    <div class="p-3 space-y-4">
-                        <div class="panel rounded-2xl p-4">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                <h1 class="font-bold"><?= $avis["equipe_home"] ?> vs <?= $avis['equipe_away'] ?></h1>
-                                <h3 class="text-sm text-blue-600"><i class="fas fa-futbol"></i> <?= $avis['match_title'] ?></h3>
-                            </div>
-                                <div class="text-xs muted2">
-                                    <i class="fa-solid fa-star text-white/70"></i>
-                                    <i class="fa-solid fa-star text-white/70"></i>
-                                    <i class="fa-solid fa-star text-white/70"></i>
-                                    <i class="fa-solid fa-star text-white/70"></i>
-                                    <i class="fa-solid fa-star text-white/70"></i>
+                    <?php foreach ($allAvis as $avis): ?>
+                        <div class="p-3 space-y-4">
+                            <div class="panel rounded-2xl p-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h1 class="font-bold"><?= $avis["equipe_home"] ?> vs <?= $avis['equipe_away'] ?></h1>
+                                        <h3 class="text-sm text-blue-600"><i class="fas fa-futbol"></i> <?= $avis['match_title'] ?></h3>
+                                    </div>
+                                    <div class="text-xs muted2">
+                                        <i class="fa-solid fa-star text-white/70"></i>
+                                        <i class="fa-solid fa-star text-white/70"></i>
+                                        <i class="fa-solid fa-star text-white/70"></i>
+                                        <i class="fa-solid fa-star text-white/70"></i>
+                                        <i class="fa-solid fa-star text-white/70"></i>
+                                    </div>
                                 </div>
+                                <div class="mt-2 text-xs muted2">
+                                    <i class="fa-solid fa-user mr-2"></i>Utilisateur: <?= $avis['user_name'] ?>
+                                </div>
+                                <p class="mt-2 text-sm muted">
+                                    <i class="fas fa-comment-dots"></i> <?= $avis['contenu'] ?>
+                                </p>
                             </div>
-                            <div class="mt-2 text-xs muted2">
-                                <i class="fa-solid fa-user mr-2"></i>Utilisateur: <?= $avis['user_name'] ?>
-                            </div>
-                            <p class="mt-2 text-sm muted">
-                                <i class="fas fa-comment-dots"></i> <?= $avis['contenu'] ?>
-                            </p>
                         </div>
-                    </div>
-                    <?php endforeach;?>
+                    <?php endforeach; ?>
                 </section>
 
             </aside>

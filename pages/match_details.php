@@ -7,11 +7,11 @@ require_once __DIR__ . "/../classes/Avis.php";
 $role = $_SESSION['role'] ?? null;
 
 
-if (!isset($_SESSION['iduser'])) {
-  die("Utilisateur non connecté");
-}
+// if (!isset($_SESSION['iduser'])) {
+//   die("Utilisateur non connecté");
+// }
 
-$iduser = $_SESSION['iduser'];
+$iduser = isset($_SESSION['iduser']) ? $_SESSION['iduser'] : null;
 
 $myMatch = new Matchs();
 
@@ -28,13 +28,18 @@ $myMatch->checkDateStartMatch($idmatch);
 
 $ticket = new Ticket();
 
-$hasTicket = $ticket->userHasTicket($_SESSION['iduser'], $idmatch);
+$hasTicket = $ticket->userHasTicket($iduser, $idmatch);
 
 //part avis
 
 $avis = new Avis();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+  // if (!isset($iduser)) {
+    
+  // }
+
     $avisText = trim($_POST['avis']);
 
     if (!empty($avisText)) {
@@ -62,6 +67,10 @@ $avisMatch = $avis->allAvicMAtch($idmatch);
   <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <style>
+
+    *{
+      scrollbar-width: none;
+    }
     body {
       font-family: 'Plus Jakarta Sans', sans-serif
     }
@@ -216,7 +225,7 @@ $avisMatch = $avis->allAvicMAtch($idmatch);
             <p class="mt-3 muted text-lg">Consultez les infos et réservez votre billet.</p>
           </div>
 
-          <a href="home.php" class="btn px-5 py-3 rounded-xl text-sm font-semibold">
+          <a href="../index.php" class="btn px-5 py-3 rounded-xl text-sm font-semibold">
             <i class="fa-solid fa-arrow-left mr-2"></i>Retour
           </a>
         </div>

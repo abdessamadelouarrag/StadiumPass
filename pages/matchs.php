@@ -263,17 +263,25 @@ $allOldTicket = $newAcheteur->meTicket($iduser);
 
                                 <!-- ACTIONS (responsive) -->
                                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 px-6 py-5">
+                                    <?php if($match['status_match'] == "en_attent"):?>
                                     <a href="match_details.php?id=<?= $match['id_match'] ?>"
                                         class="w-full sm:flex-1 text-center px-5 py-3 rounded-xl border border-white/15 bg-white/5 text-sm font-bold hover:bg-white/10 transition">
                                         <i class="fa-solid fa-circle-info mr-2"></i>
                                         Voir détails
                                     </a>
-
                                     <a href="buy_ticket.php?id=<?= $match['id_match'] ?>"
                                         class="w-full sm:flex-1 text-center btn-red px-5 py-3 rounded-xl text-sm font-bold">
                                         <i class="fa-solid fa-ticket mr-2"></i>
                                         Réserver
                                     </a>
+                                    
+                                    <?php else:?>
+                                        <a href="match_details.php?id=<?= $match['id_match'] ?>"
+                                        class="w-full sm:flex-1 text-center px-5 py-3 rounded-xl border border-white/15 bg-white/80 text-blue-600 text-sm font-bold hover:bg-white transition">
+                                        <i class="fa-solid fa-circle-info mr-2"></i>
+                                        Voir les Commentaires 
+                                        </a>
+                                    <?php endif;?>
                                 </div>
 
                             </article>
