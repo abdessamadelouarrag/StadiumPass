@@ -1,14 +1,38 @@
-<?php 
+<?php
+
+use LDAP\Result;
+
 require_once __DIR__ . "/classes/Matchs.php";
+require_once __DIR__ . "/classes/Filtre.php";
 
 $allMatches = new Matchs();
 
 $matches = $allMatches->allMatches();
 
+//part filter
+
+$filter = new Filtre();
+$resultFilter = []; 
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    $ville = $_POST['ville'] ?? '';
+
+    header("Location: index.php?ville=" . urlencode($ville));
+    exit();
+}
+
+$ville = $_GET['ville'] ?? '';
+if (!empty($ville)) {
+    $resultFilter = $filter->filterByVille($ville) ?? [];
+}
+
+
 ?>
 
 <!doctype html>
 <html lang="fr">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -19,58 +43,109 @@ $matches = $allMatches->allMatches();
   <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif }
-    .brand { font-family: 'Marcellus', serif }
-
-    :root{
-      --bg:#07070A;
-      --border:rgba(255,255,255,.10);
-      --muted:rgba(255,255,255,.70);
-      --muted2:rgba(255,255,255,.55);
-      --red:#7A0F26;
-      --gold:#B08A3A;
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif
     }
 
-    .bg-app{
+    .brand {
+      font-family: 'Marcellus', serif
+    }
+
+    :root {
+      --bg: #07070A;
+      --border: rgba(255, 255, 255, .10);
+      --muted: rgba(255, 255, 255, .70);
+      --muted2: rgba(255, 255, 255, .55);
+      --red: #7A0F26;
+      --gold: #B08A3A;
+    }
+
+    .bg-app {
       background:
         radial-gradient(900px 500px at 15% 10%, rgba(161, 20, 51, .18), transparent 60%),
         radial-gradient(900px 500px at 90% 20%, rgba(176, 138, 58, .10), transparent 60%),
         var(--bg);
     }
 
-    .card{ background:rgba(15,15,22,.88); border:1px solid var(--border) }
-    .panel{ background:rgba(15,15,22,.70); border:1px solid var(--border); backdrop-filter: blur(10px) }
-    .card-red{ background:linear-gradient(180deg, rgba(161,20,51,.35), rgba(15,15,22,.92)); border:1px solid rgba(161,20,51,.35) }
-    .muted{ color:var(--muted) }
-    .muted2{ color:var(--muted2) }
-
-    .btn{ border:1px solid var(--border); background:rgba(255,255,255,.04); transition:.2s }
-    .btn:hover{ background:rgba(255,255,255,.07); transform: translateY(-1px) }
-
-    .btn-red{
-      background:linear-gradient(180deg, rgba(161,20,51,.95), rgba(122,15,38,.95));
-      border:1px solid rgba(176,138,58,.22);
-      transition:.2s
+    .card {
+      background: rgba(15, 15, 22, .88);
+      border: 1px solid var(--border)
     }
-    .btn-red:hover{ filter:brightness(1.05); transform: translateY(-1px) }
 
-    .input{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.10) }
-    .input:focus{ outline:none; border-color: rgba(176,138,58,.55) }
+    .panel {
+      background: rgba(15, 15, 22, .70);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px)
+    }
 
-    .pill{ border:1px solid rgba(176,138,58,.28); background: rgba(176,138,58,.08) }
-    .backdrop{ background: rgba(0,0,0,.60) }
+    .card-red {
+      background: linear-gradient(180deg, rgba(161, 20, 51, .35), rgba(15, 15, 22, .92));
+      border: 1px solid rgba(161, 20, 51, .35)
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .muted2 {
+      color: var(--muted2)
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, .04);
+      transition: .2s
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, .07);
+      transform: translateY(-1px)
+    }
+
+    .btn-red {
+      background: linear-gradient(180deg, rgba(161, 20, 51, .95), rgba(122, 15, 38, .95));
+      border: 1px solid rgba(176, 138, 58, .22);
+      transition: .2s
+    }
+
+    .btn-red:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px)
+    }
+
+    .input {
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid rgba(255, 255, 255, .10)
+    }
+
+    .input:focus {
+      outline: none;
+      border-color: rgba(176, 138, 58, .55)
+    }
+
+    .pill {
+      border: 1px solid rgba(176, 138, 58, .28);
+      background: rgba(176, 138, 58, .08)
+    }
+
+    .backdrop {
+      background: rgba(0, 0, 0, .60)
+    }
 
     /* Logos (icons) */
-    .logo{
-      width:52px; height:52px;
+    .logo {
+      width: 52px;
+      height: 52px;
       border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      display:flex; align-items:center; justify-content:center;
+      border: 1px solid rgba(255, 255, 255, .10);
+      background: rgba(255, 255, 255, .04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     /* ✅ Popup without JS using :target */
-    .modal{
+    .modal {
       position: fixed;
       inset: 0;
       display: none;
@@ -78,7 +153,10 @@ $matches = $allMatches->allMatches();
       justify-content: center;
       z-index: 100;
     }
-    .modal:target{ display:flex; }
+
+    .modal:target {
+      display: flex;
+    }
   </style>
 </head>
 
@@ -125,40 +203,55 @@ $matches = $allMatches->allMatches();
         <div class="text-sm font-bold">
           <i class="fa-solid fa-filter mr-2 text-white/70"></i>Filtres
         </div>
-        <div class="mt-4 grid sm:grid-cols-2 gap-3">
-          <div>
-            <div class="text-xs muted2 mb-1">Recherche</div>
-            <div class="input rounded-xl px-4 py-3 flex items-center gap-3">
-              <i class="fa-solid fa-magnifying-glass text-white/45"></i>
-              <input class="w-full bg-transparent outline-none text-white placeholder:text-white/35" placeholder="Equipe, stade, ville..." />
+        <form action="" method="POST">
+          <div class="mt-4 grid">
+            <div>
+              <div class="text-xs muted2 mb-1">Recherche</div>
+              <div class="input rounded-xl px-4 py-3 flex items-center gap-3">
+                <i class="fa-solid fa-magnifying-glass text-white/45"></i>
+                <input
+                  id="searchInput"
+                  class="w-full bg-transparent outline-none text-white placeholder:text-white/35"
+                  placeholder="Entrer la ville..." name="ville" />
+              </div>
             </div>
           </div>
-          <div>
-            <div class="text-xs muted2 mb-1">Ville</div>
-            <select class="w-full input rounded-xl px-4 py-3 text-white bg-transparent outline-none">
-              <option>Toutes</option>
-              <option>Casablanca</option>
-              <option>Rabat</option>
-              <option>Marrakech</option>
-              <option>Tanger</option>
-            </select>
+          <div class="mt-4 flex gap-3">
+            <button
+              id="applyBtn"
+              class="btn-red px-5 py-3 rounded-xl text-sm font-bold w-full">
+              <i class="fa-solid fa-check mr-2"></i>Appliquer
+            </button>
           </div>
-          <div class="sm:col-span-2">
-            <div class="text-xs muted2 mb-1">Compétition</div>
-            <select class="w-full input rounded-xl px-4 py-3 text-white bg-transparent outline-none">
-              <option>Toutes</option>
-              <option>Ligue Pro</option>
-              <option>Coupe Nationale</option>
-              <option>Super Cup</option>
-            </select>
-          </div>
-        </div>
-        <div class="mt-4 flex gap-3">
-          <button class="btn-red px-5 py-3 rounded-xl text-sm font-bold w-full">
-            <i class="fa-solid fa-check mr-2"></i>Appliquer
-          </button>
-        </div>
+        </form>
       </div>
+      <?php foreach ($resultFilter as $result): ?>
+        <div id="results" class="mt-6 space-y-4">
+          <div class="panel rounded-2xl p-4 flex items-center gap-4 hover:bg-white/5 transition cursor-pointer">
+            <img src="<?= $result['image_home'] ?>"
+              alt="Team 1"
+              class="w-14 h-14 rounded-full object-cover bg-white/10" />
+            <div class="flex-1">
+              <h3 class="font-bold text-base">
+                <?= $result['equipe_home'] ?><span class="text-white/50 mx-1">vs</span><?= $result['equipe_away'] ?>
+              </h3>
+              <div class="text-sm text-white/60 mt-1 flex flex-wrap gap-4">
+                <span>
+                  <i class="fa-solid fa-location-dot mr-1"></i>
+                  <?= $result['stade'] ?> · <?= $result['ville'] ?>
+                </span>
+                <span>
+                  <i class="fa-solid fa-calendar-days mr-1"></i>
+                  <?= $result['date_match'] ?> · <?= $result['hour'] ?>
+                </span>
+              </div>
+            </div>
+            <img src="<?= $result['image_away'] ?>" alt="Team 2" class="w-14 h-14 rounded-full object-cover bg-white/10" />
+          </div>
+          <button class="card-red p-3 rounded-2xl">Reserver</button>
+        </div>
+      <?php endforeach; ?>
+
     </div>
   </header>
 
@@ -177,65 +270,65 @@ $matches = $allMatches->allMatches();
     </div>
 
     <div class="mt-10 grid grid-cols-2 gap-3">
-        <?php foreach($matches as $match): ?>
-      <div class="card rounded-2xl p-6">
-        <div class="flex items-center justify-between">
-          <div class="pill px-3 py-1 rounded-full text-xs font-semibold">
-            <i class="fa-solid fa-trophy mr-2"></i><?= $match['titre'] ?>
-          </div>
-          <div class="text-xs muted2">
-            <i class="fa-solid fa-tag mr-2"></i>Meilleur <b class="text-white">Prix</b>
-          </div>
-        </div>
-
-        <div class="mt-6 flex items-center justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <div class="logo overflow-hidden" title="equipe-home">
-              <img src="<?= $match['image_home'] ?>" alt="" class="w-full h-full object-cover">
+      <?php foreach ($matches as $match): ?>
+        <div class="card rounded-2xl p-6">
+          <div class="flex items-center justify-between">
+            <div class="pill px-3 py-1 rounded-full text-xs font-semibold">
+              <i class="fa-solid fa-trophy mr-2"></i><?= $match['titre'] ?>
             </div>
-            <div>
-              <div class="font-bold text-lg"><?= $match['equipe_home'] ?></div>
-              <div class="text-xs muted2">Home</div>
+            <div class="text-xs muted2">
+              <i class="fa-solid fa-tag mr-2"></i>Meilleur <b class="text-white">Prix</b>
             </div>
           </div>
 
-          <div class="text-center">
-            <div class="brand text-3xl text-white/80">VS</div>
-            <div class="text-xs muted2 -mt-1">Match</div>
-          </div>
-
-          <div class="flex items-center gap-3">
-            <div>
-              <div class="font-bold text-lg text-right"><?= $match['equipe_away'] ?></div>
-              <div class="text-xs muted2 text-right">Away</div>
+          <div class="mt-6 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="logo overflow-hidden" title="equipe-home">
+                <img src="<?= $match['image_home'] ?>" alt="" class="w-full h-full object-cover">
+              </div>
+              <div>
+                <div class="font-bold text-lg"><?= $match['equipe_home'] ?></div>
+                <div class="text-xs muted2">Home</div>
+              </div>
             </div>
-            <div class="logo overflow-hidden" title="image-away">
-              <img src="<?= $match['image_away'] ?>" alt="" class="w-full h-full object-cover">
+
+            <div class="text-center">
+              <div class="brand text-3xl text-white/80">VS</div>
+              <div class="text-xs muted2 -mt-1">Match</div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div>
+                <div class="font-bold text-lg text-right"><?= $match['equipe_away'] ?></div>
+                <div class="text-xs muted2 text-right">Away</div>
+              </div>
+              <div class="logo overflow-hidden" title="image-away">
+                <img src="<?= $match['image_away'] ?>" alt="" class="w-full h-full object-cover">
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="mt-6 grid sm:grid-cols-2 gap-3 text-sm muted2">
-          <div class="card rounded-xl p-4">
-            <i class="fa-solid fa-calendar-day mr-2 text-white/60"></i>
-            <?= $match['date_match'] ?> — <?= $match['hour'] ?>
+          <div class="mt-6 grid sm:grid-cols-2 gap-3 text-sm muted2">
+            <div class="card rounded-xl p-4">
+              <i class="fa-solid fa-calendar-day mr-2 text-white/60"></i>
+              <?= $match['date_match'] ?> — <?= $match['hour'] ?>
+            </div>
+            <div class="card rounded-xl p-4">
+              <i class="fa-solid fa-location-dot mr-2 text-white/60"></i>
+              <?= $match['stade'] ?>, <?= $match['ville'] ?>
+            </div>
           </div>
-          <div class="card rounded-xl p-4">
-            <i class="fa-solid fa-location-dot mr-2 text-white/60"></i>
-            <?= $match['stade'] ?>, <?= $match['ville'] ?>
-          </div>
-        </div>
 
-        <div class="mt-6 grid grid-cols-2 gap-3">
-          <a href="/pages/match_details.php?id=<?= $match['id_match'] ?>" class="btn px-4 py-3 rounded-xl text-sm font-semibold text-center">
-            <i class="fa-solid fa-circle-info mr-2"></i>Détails
-          </a>
-          <a href="/pages/buy_ticket.php?id" class="btn-red px-4 py-3 rounded-xl text-sm font-bold text-center">
-            <i class="fa-solid fa-ticket mr-2"></i>Réserver
-          </a>
+          <div class="mt-6 grid grid-cols-2 gap-3">
+            <a href="/pages/match_details.php?id=<?= $match['id_match'] ?>" class="btn px-4 py-3 rounded-xl text-sm font-semibold text-center">
+              <i class="fa-solid fa-circle-info mr-2"></i>Détails
+            </a>
+            <a href="/pages/buy_ticket.php?id" class="btn-red px-4 py-3 rounded-xl text-sm font-bold text-center">
+              <i class="fa-solid fa-ticket mr-2"></i>Réserver
+            </a>
+          </div>
         </div>
-      </div>
-      <?php endforeach;?>
+      <?php endforeach; ?>
     </div>
   </main>
 
@@ -309,7 +402,7 @@ $matches = $allMatches->allMatches();
   </div> -->
 
   <!-- ✅ RESERVE POPUP (NO JS) -->
- <!-- <div id="reserve" class="modal">
+  <!-- <div id="reserve" class="modal">
     <div class="absolute inset-0 backdrop"></div>
 
     <div class="relative w-[94%] max-w-lg card rounded-2xl overflow-hidden">
@@ -378,4 +471,5 @@ $matches = $allMatches->allMatches();
   </div> -->
 
 </body>
+
 </html>
