@@ -15,19 +15,20 @@ $filter = new Filtre();
 $resultFilter = []; 
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
     $ville = $_POST['ville'] ?? '';
-
-    header("Location: index.php?ville=" . urlencode($ville));
-    exit();
+    
+    if (!empty($ville)) {
+        // Rediriger vers GET avec paramètre
+        header("Location: " . $_SERVER['PHP_SELF'] . "?ville=" . urlencode($ville));
+        exit();
+    }
 }
 
-$ville = $_GET['ville'] ?? '';
-if (!empty($ville)) {
-    $resultFilter = $filter->filterByVille($ville) ?? [];
+// Traiter la recherche via GET
+if (isset($_GET['ville']) && !empty($_GET['ville'])) {
+    $ville = $_GET['ville'];
+    $resultFilter = $filter->filterByVille($ville);
 }
-
-
 ?>
 
 <!doctype html>
@@ -222,6 +223,9 @@ if (!empty($ville)) {
               class="btn-red px-5 py-3 rounded-xl text-sm font-bold w-full">
               <i class="fa-solid fa-check mr-2"></i>Appliquer
             </button>
+            <a href="index.php" class="bg-gray-700/40 flex justify-center items-center px-3 rounded-2xl text-[13px] font-bold">
+                <i class="fa-solid fas fa-repeat mr-2 text-[10px]"></i>Reset
+            </a>
           </div>
         </form>
       </div>
