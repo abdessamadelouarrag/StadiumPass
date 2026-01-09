@@ -50,6 +50,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 //part all avis bu match
 $avisMatch = $avis->allAvicMAtch($idmatch);
 
+//part check to go back to last page
+
+if ($role == 'acheteur') {
+    $backUrl = "../pages/matchs.php";
+} else if (!$role) {
+    $backUrl = "../index.php";
+}
+
 ?>
 
 
@@ -225,7 +233,7 @@ $avisMatch = $avis->allAvicMAtch($idmatch);
             <p class="mt-3 muted text-lg">Consultez les infos et réservez votre billet.</p>
           </div>
 
-          <a href="../index.php" class="btn px-5 py-3 rounded-xl text-sm font-semibold">
+          <a href="<?= $backUrl ?>" class="btn px-5 py-3 rounded-xl text-sm font-semibold">
             <i class="fa-solid fa-arrow-left mr-2"></i>Retour
           </a>
         </div>
@@ -375,10 +383,12 @@ $avisMatch = $avis->allAvicMAtch($idmatch);
     <div class="space-y-4">
       <?php foreach ($avisMatch as $avis): ?>
         <div class="card rounded-2xl p-4">
+          <div class="w-9 h-9 bg-red-600 overflow-hidden rounded-xl">
+            <img src="<?= $avis['image'] ?>" alt="" class="w-full h-full object-cover">
+          </div>
           <div class="flex items-center justify-between mb-2">
             <div class="font-semibold text-sm text-blue-600">
-              <i class="fa-solid fa-user mr-2 text-blue-600/60"></i>
-              <?= htmlspecialchars($avis['user_name']) ?>
+              <?= htmlspecialchars($avis['nom']) ?>
             </div>
             <div class="text-xs muted2">
               <?= date('d/m/Y', strtotime($avis['created_at'])) ?>
